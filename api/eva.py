@@ -196,7 +196,7 @@ def ip_list(req):
 	ips=NetWorkManager().getFreeIp(connections[neutron_db])
 	print "ips %s" % ips
 	regions[neutron_db]=ips
-	totals[neutron_db]=json.dumps(NetWorkManager().getTotalNum(ips))
+	totals[neutron_db]=json.dumps(NetWorkManager().getAllTotalNum(ips,connections[neutron_db]))
     print regions
     print totals
     return render_to_response('ip_list.html',locals())

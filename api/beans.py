@@ -184,9 +184,11 @@ class KeyStoneManager:
 
 GET_FREE_IP='SELECT networks.`name`,networks.`status`,subnets.id,ipavailabilityranges.first_ip,ipavailabilityranges.last_ip,networks.id,subnets.`name` as "subnet_name" FROM ipavailabilityranges,ipallocationpools,subnets,networks WHERE ipavailabilityranges.allocation_pool_id=ipallocationpools.id AND ipallocationpools.subnet_id=subnets.id AND subnets.network_id=networks.id ORDER BY networks.`name`,subnets.`name`'
 
+GET_ALL_NETWORKS='SELECT id,name,status FROM networks WHERE `status`="ACTIVE" AND shared=1'
+
 
 class NetWork:
-	def __init__(self,id_,name,status,subnet,subnet_id,first_ip,last_ip):
+	def __init__(self,id_,name,status,subnet=None,subnet_id=None,first_ip="",last_ip=""):
 		self.name=name
 		self.status=status
 		self.subnet=subnet
@@ -194,7 +196,8 @@ class NetWork:
 		self.first_ip=first_ip
 		self.last_ip=last_ip
 		self.id=id_
-		self.freeNumber=self.freeNum()
+		if subnet:
+		    self.freeNumber=self.freeNum()
 
 	def freeNum(self):
 		index=self.first_ip.rindex(".")+1
@@ -232,6 +235,29 @@ class NetWorkManager:
 	    else:
 		display[node.name]=node.freeNum()
 	return display
+
+    def getAllNetWorks(self,db):
+	cursor=db.cursor()
+	cursor.execute(GET_ALL_NETWORKS)
+	results=cursor.fetchall()
+	cursor.close()
+	nodes=[]
+	for line in results:
+		id_=line[0]
+		name=line[1]
+		status=line[2]
+		nodes.append(NetWork(id_,name,status))
+	return nodes
+
+    def getAllTotalNum(self,nodes,db):
+	freeNodes=self.getTotalNum(nodes)
+	networks=self.getAllNetWorks(db)
+	for network in networks:
+	    if not freeNodes.has_key(network.name):
+		freeNodes[network.name]=0
+	return freeNodes
+
+
 
 
 
