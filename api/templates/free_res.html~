@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+
+{% block title %}free resource{% endblock %}
+
+{% block content %}
+
+
+<style id="headtyle"  type="text/css">
+
+table th {
+	padding: 5px 0;
+	word-wrap: break-word;
+	vertical-align: middle;
+	border-bottom: 1px solid #CEC8C8;
+	border-right: 1px solid #CEC8C8;
+
+
+}
+
+table td {
+	padding: 5px 0;
+	word-wrap: break-word;
+	vertical-align: middle;
+	border-bottom: 1px solid #CEC8C8;
+	border-right: 1px solid #CEC8C8;
+	text-align: center;
+}
+
+/* - public style - */
+.red { color: #F00; }
+.bold { font-weight: bold; }
+.green { color: #06A53B; }
+.gray { color: #9a9a9a; }
+.blue { color: #0086d2; }
+.black {color:#000000;}
+.yellow { color: #ECF73A; }
+.white { color: #FFF; }
+.orange{color:#FB6603;}
+.brown {color:#af4c0a;}
+.darkbrown{color:#6a3906;}
+.purple{color:#8a2be2;}
+.title{color:#748BA2;}
+.clear { clear: both; }
+.overflow { overflow: hidden; }
+.padding { padding: 1px; }
+.left { float: left; }
+.right { float: right; }
+.fcenter{clear: both;float: none;margin-left: auto;margin-right: auto;margin-top: 0px;}
+.center { text-align: center; }
+.textL { text-align: left; }
+.textR {text-align: right; }
+.marX8{margin:0 8px;}
+.marY8{margin:8px 0;}
+.mar8{margin:8px;}
+.marY4{margin:4px 0;}
+.f16{font-size:16px;}
+.hand_{cursor:pointer;}
+.underline{text-decoration:underline;}
+.no_underline{text-decoration:none;}
+.hide{display:none;}
+.bg_green{background-color:#33D2FC;}
+.bg_gray{background-color:#FAFAFA;}
+.bd_red{border:1px solid red;}
+.padding5{padding:5px;}
+.bd_dashed_yellow{border: 1px dashed yellow;}
+
+</style>
+
+{% for region,nodes in regions.items %}
+
+
+<div><h2>Current DB:{{region}}</h2></div>
+<table>
+	<tbody>
+		<tr>
+			<th>hostname</th>
+			<th>running_vms</th>
+			<th>vcpus</th>
+			<th>vcpus_used</th>
+			<th>rest_vcpus</th>
+			<th>memory_mb</th>
+			<th>memory_mb_used</th>
+	                <th>rest_memory</th>
+		</tr>
+
+
+		{% for node in nodes %}
+		<tr>
+			<td>{{ node.hypervisor_hostname }}</td>	
+			<td>{{ node.running_vms }}</td>
+			<td>{{ node.vcpus }}</td>
+			<td>{{ node.vcpus_used }}</td>	
+			<td class='red'>{{ node.rest_vcpus }}</td>
+			<td>{{ node.memory_mb }}</td>
+			<td>{{ node.memory_mb_used }}</td>
+			<td class='red'>{{ node.rest_memory_mb/1024 }}</td>	
+
+		</tr>
+		{% endfor %}
+
+	</tbody>
+</table>
+
+{% endfor %}
+
+
+{% endblock %}

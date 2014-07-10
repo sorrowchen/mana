@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+
+{% block title %}free resource{% endblock %}
+
+{% block content %}
+
+
+{% for region,nodes in regions.items %}
+
+
+<div class='marY8'><h2>Current DB:{{region}}</h2></div>
+<table>
+	<tbody>
+		<tr>
+			<th>hostname</th>
+			<th>running_vms</th>
+			<th>vcpus</th>
+			<th>vcpus_used</th>
+			<th>rest_vcpus</th>
+			<th>memory_mb</th>
+			<th>memory_mb_used</th>
+	                <th>rest_memory</th>
+		</tr>
+
+
+		{% for node in nodes %}
+		<tr>
+			<td>{{ node.hypervisor_hostname }}</td>	
+			<td>{{ node.running_vms }}</td>
+			<td>{{ node.vcpus }}</td>
+			<td>{{ node.vcpus_used }}</td>	
+			<td class='red'>{{ node.rest_vcpus }}</td>
+			<td>{{ node.memory_mb }}</td>
+			<td>{{ node.memory_mb_used }}</td>
+			<td class='red'>{{ node.rest_memory_mb }}</td>	
+
+		</tr>
+		{% endfor %}
+
+	</tbody>
+</table>
+
+{% endfor %}
+
+
+{% endblock %}

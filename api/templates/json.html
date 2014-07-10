@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+
+{% block title %}json view{% endblock %}
+
+{% block content %}
+
+
+<div id='json'></div>
+
+<script type="text/javascript">
+    $(function() {
+      $("#json").JSONView({{json_str|safe}});
+    });
+</script>
+
+
+
+{% endblock %}

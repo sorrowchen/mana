@@ -1,0 +1,4 @@
+#C2 LOGIN INFO
+C2_USER=admin
+C2_USER_PWD=admin
+C2_TENANT=admin

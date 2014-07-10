@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+
+{% block title %}free resource{% endblock %}
+
+{% block content %}
+
+<ul>
+ <li><a href="/api/free-res/" target="_blank">resource usage</a></li>
+ <li><a href="/api/service-status/" target="_blank">service status</a></li>
+
+ <li><a href="/api/az-list/" target="_blank">az > compute nodes</a></li>
+
+ <li><a href="/api/free-ip-list/" target="_blank">free ip list</a></li>
+
+ <li>search machine info by ip:<input type="text" id="ipInfo"/> <input type="button" id="searchIp" value=" search " onclick="ipInfo()"/></li>
+
+
+ <li>evacuate machine by ip:<input type="text" id="evaIp"/> <input type="button" id="searchIp" value=" evacuate " onclick="evacuate()"/></li>
+
+
+
+
+</ul>
+
+<script type="text/javascript">
+
+function ipInfo(){
+   var ip=$("#ipInfo").val();
+   var url="/api/machine/"+ip+"/";
+   window.open(url);
+}
+   
+function evacuate(){
+   var ip=$("#evaIp").val();
+   var url="/api/repair-eva/"+ip;
+   window.open(url);
+}
+
+</script>
+
+{% endblock %}

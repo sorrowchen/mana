@@ -1,0 +1,475 @@
+@charset "utf-8";
+/* CSS Document */
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	border: 0;
+	outline: 0;
+}
+
+body, table, input, textarea, select, option {
+	 font: 15px 'Helvetica Neue',Helvetica,Arial,Sans-serif;
+}
+table, input, textarea, select, option {
+	line-height: 1.1;
+	border-collapse: collapse;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+:focus {
+	outline: 0;
+}
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+a:link {
+	color: #16AED5;
+	text-decoration: underline;
+}
+a:visited {
+	color: #16AED5;
+	text-decoration: underline;
+}
+a:hover {
+	color: #16AED5;
+	text-decoration: none;
+}
+a:active {
+	color: #16AED5;
+	text-decoration: underline;
+}
+/*------------------------------------------------------------
+	body
+------------------------------------------------------------*/
+body {
+	color: #525252;
+	background-color: #F4F7F8;
+	text-align: center;
+}
+#container {
+	margin: 0 auto;
+	width: 1042px;
+	text-align: left;
+}
+/*------------------------------------------------------------
+	header
+------------------------------------------------------------*/
+
+/*------------------------------------------------------------
+	main
+------------------------------------------------------------*/
+#main {
+	background: url(../img/main_bg.gif) repeat-y left;
+}
+#conts {
+	width: 799px;
+	background-color: #FFF;
+	margin-top:20px;
+}
+/*------------------------------------------------------------
+	patch
+------------------------------------------------------------*/
+#conts table tbody{
+	border: 1px solid #e1e4e5;
+	border-collapse: collapse;
+	border-spacing: 0;
+	display: table;
+	margin-left:10px;
+}
+
+#conts table tbody tr {
+	display: table-row;
+	vertical-align: inherit;
+	border-color: inherit;
+	border-bottom: 1px solid #e1e4e5;
+	border-left: 1px solid #e1e4e5;
+}
+
+#conts table tbody td,th {
+	border-bottom: 1px solid #e1e4e5;
+	border-left: 1px solid #e1e4e5;
+	text-align:center;
+	padding:3px;
+}
+
+ul li{
+	margin:5px;
+}
+
+
+/*------------------------------------------------------------
+	footer
+------------------------------------------------------------*/
+#footer {
+	padding-top: 2px;
+	text-align: center;
+	border-top: 1px solid #E4E4E4;
+}
+#footer p {
+	color: #CCC;
+}
+
+
+/*-----------lightbox----------------*/
+#addInfo {
+	width: 450px;
+	border-radius: 6px;
+	border: 1px solid #ACACAC;
+	box-shadow:  rgba(0, 0, 0, .6) 0px 2px 12px;
+	padding: 20px 10px 14px;
+	position: relative;
+	display: none;
+	background-color: #FFF;
+}
+#addInfo .addTab {
+	margin: 0 0 20px 20px;
+}
+#addInfo .addTab td {
+	padding: 5px 0;
+}
+#addInfo .addTab td span {
+	padding-right: 3px;
+	color: #F00;
+	vertical-align: middle;
+}
+#addInfo .addTab td input {
+	color: #666;
+	width: 180px;
+}
+#addInfo .addTab td select {
+	color: #666;
+	width: 184px;
+	width: 186px\9;
+}
+#addInfo ul {
+	padding-right: 10px;
+}
+#addInfo ul li {
+	margin-left: 20px;
+	width: 60px;
+	float: right;
+}
+#addInfo ul li a {
+	padding-left: 3px;
+	display: block;
+	color: #FFF;
+	text-align: center;
+	text-decoration: none;
+	background: url(../img/s_btn_bg.png) no-repeat left top;
+}
+#addInfo ul li a span {
+	display: block;
+	line-height: 26px;
+	background: url(../img/s_btn_bg.png) no-repeat right -36px;
+}
+#addInfo ul li a:hover {
+	background: url(../img/s_btn_bg.png) no-repeat left -72px;
+}
+#addInfo ul li a:hover span {
+	background: url(../img/s_btn_bg.png) no-repeat right -108px;
+}
+#addInfo ul li a.close {
+	background: url(../img/s_btn_bg.png) no-repeat left -144px;
+}
+#addInfo ul li a.close span {
+	background: url(../img/s_btn_bg.png) no-repeat right -180px;
+}
+#addInfo ul li a.close:hover {
+	background: url(../img/s_btn_bg.png) no-repeat left -216px;
+}
+#addInfo ul li a.close:hover span {
+	background: url(../img/s_btn_bg.png) no-repeat right -252px;
+}
+
+.showTextArea {
+	width: 280px;
+	border-radius: 6px;
+	border: 1px solid #ACACAC;
+	box-shadow:  rgba(0, 0, 0, .6) 0px 2px 12px;
+	padding: 30px 20px 20px;
+	position: relative;
+	display: none;
+	background-color: #FFF;
+}
+
+
+.showTextArea2 {
+	width: 750px;
+	height:auto;
+	border-radius: 6px;
+	border: 1px solid #ACACAC;
+	box-shadow:  rgba(0, 0, 0, .6) 0px 2px 12px;
+	padding: 30px 20px 20px;
+	position: relative;
+	display: none;
+	background-color: #FFF;
+}
+
+
+#viewGroup {
+	width: 680px;
+	border-radius: 6px;
+	border: 1px solid #ACACAC;
+	box-shadow:  rgba(0, 0, 0, .6) 0px 2px 12px;
+	padding: 30px 20px 20px;
+	position: relative;
+	display: none;
+	background-color: #FFF;
+}
+#viewGroup table {
+	color: #666;
+	width: 100%;
+	text-align: center;
+	table-layout: fixed;
+}
+#viewGroup table th, #viewGroup table td {
+	word-wrap: break-word;
+	word-break: break-all;
+}
+#viewGroup table th {
+    border: 1px solid #CEC8C8;
+    padding: 5px 3px;
+    background: url("../img/th_bg.gif") repeat-x left top;
+}
+#viewGroup table td {
+    padding: 5px 3px;
+    border: 1px solid #CEC8C8;
+}
+/**/
+.viewGroup {
+	width: 600px;
+	border-radius: 6px;
+	border: 1px solid #ACACAC;
+	box-shadow:  rgba(0, 0, 0, .6) 0px 2px 12px;
+	padding: 30px 20px 20px;
+	position: relative;
+	display: none;
+	background-color: #FFF;
+}
+.viewGroup table {
+	color: #666;
+	width: 100%;
+	text-align: center;
+	table-layout: fixed;
+}
+.viewGroup table th, #viewGroup table td {
+	word-wrap: break-word;
+	word-break: break-all;
+}
+.viewGroup table th {
+    border: 1px solid #CEC8C8;
+    padding: 5px 3px;
+    background: url("../img/th_bg.gif") repeat-x left top;
+}
+.viewGroup table td {
+    padding: 5px 3px;
+    border: 1px solid #CEC8C8;
+}
+
+#conts .inquiry2 {
+	margin-bottom: 10px;
+	padding-left: 10px;
+	_padding-top: 3px;
+	height: 33px;
+	line-height: 33px;
+	background: url(../img/inquiry_bg.gif) no-repeat left top;
+	zoom: 1; 
+}
+
+#conts .inquiry2 .button {
+	margin: 0 20px 0 0;
+	width: 20px;
+	height: 18px;
+	cursor: pointer;
+	border: 0 none;
+	background: url(../img/find.png) no-repeat left bottom;
+}
+
+/*** Manifest ***/
+
+/* Manifest container that wraps the elements and now acts as, and should be
+   styled as, the input. */
+div.mf_container {
+  border: 1px solid #000000;
+  cursor: text;
+  display: inline-block;
+  padding: 2px;
+  width: 494px;
+}
+
+/* Ordered list for displaying selected items. */
+div.mf_container ol.mf_list {
+  display: inline;
+}
+
+/* Selected item, regardless of state (highlighted, selected). */
+div.mf_container ol.mf_list li.mf_item {
+  border: 1px solid #C0C0C0;
+  cursor: pointer;
+  display: inline-block;
+  margin: 2px;
+  padding: 4px 4px 5px;
+}
+
+/* Selected item that's highlighted by mouseover. */
+div.mf_container ol.mf_list li.mf_item.mf_highlighted {
+  background-color: #E0E0E0;
+}
+
+/* Selected item that's selected by click or keyboard. */
+div.mf_container ol.mf_list li.mf_item.mf_selected {
+  background-color: #C0C0C0;
+}
+
+/* Remove link. */
+div.mf_container ol.mf_list li.mf_item a.mf_remove {
+  color: #E0E0E0;
+  margin-left: 10px;
+  text-decoration: none;
+}
+
+/* Remove link that's highlighted. */
+div.mf_container ol.mf_list li.mf_item.mf_highlighted a.mf_remove {
+  color: #FFFFFF;
+}
+
+/* Remove link that's selected. */
+div.mf_container ol.mf_list li.mf_item.mf_selected a.mf_remove {
+  color: #FFFFFF;
+}
+
+/* Actual input, styled to be invisible within the container. */
+div.mf_container input.mf_input {
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  margin: 2px;
+  outline: none;
+  padding: 4px;
+}
+
+/*** Marco Polo ***/
+
+/* Ordered list for display results. */
+ol.mp_list {
+  background-color: #FFFFFF;
+  border-left: 1px solid #C0C0C0;
+  border-right: 1px solid #C0C0C0;
+  overflow: hidden;
+  position: absolute;
+  width: 498px;
+  z-index: 99999;
+}
+
+/* Each list item, regardless of success, error, etc. */
+ol.mp_list li {
+  border-bottom: 1px solid #C0C0C0;
+  padding: 4px 4px 5px 9px;
+}
+
+/* Each list item from a successful request. */
+ol.mp_list li.mp_item {
+
+}
+
+/* Each list item that's selectable. */
+ol.mp_list li.mp_selectable {
+  cursor: pointer;
+}
+
+/* Currently highlighted list item. */
+ol.mp_list li.mp_highlighted {
+  background-color: #E0E0E0;
+}
+
+/* When a request is made that returns zero results. */
+ol.mp_list li.mp_no_results {
+
+}
+
+/* When a request is made that doesn't meet the 'minChars' length option. */
+ol.mp_list li.mp_min_chars {
+
+}
+
+/* When a request is made that fails during the ajax request. */
+ol.mp_list li.mp_error {
+
+}
+
+
+/**/
+.heightAuto {
+	height: auto !important;
+}
+
+/* - public style - */
+.red { color: #F00; }
+.bold { font-weight: bold; }
+.green { color: #06A53B; }
+.gray { color: #9a9a9a; }
+.blue { color: #0086d2; }
+.black {color:#000000;}
+.yellow { color: #ECF73A; }
+.white { color: #FFF; }
+.orange{color:#FB6603;}
+.brown {color:#af4c0a;}
+.darkbrown{color:#6a3906;}
+.purple{color:#8a2be2;}
+.title{color:#748BA2;}
+.clear { clear: both; }
+.overflow { overflow: hidden; }
+.padding { padding: 1px; }
+.left { float: left; }
+.right { float: right; }
+.fcenter{clear: both;float: none;margin-left: auto;margin-right: auto;margin-top: 0px;}
+.center { text-align: center; }
+.textL { text-align: left; }
+.textR {text-align: right; }
+.marX8{margin:0 8px;}
+.marY8{margin:8px 0;}
+.mar8{margin:8px;}
+.marY4{margin:4px 0;}
+.f16{font-size:16px;}
+.hand_{cursor:pointer;}
+.underline{text-decoration:underline;}
+.no_underline{text-decoration:none;}
+.hide{display:none;}
+.bg_green{background-color:#33D2FC;}
+.bg_gray{background-color:#FAFAFA;}
+.bd_red{border:1px solid red;}
+.padding5{padding:5px;}
+.bd_dashed_yellow{border: 1px dashed yellow;}
+
+/*=======================================
+* Tooltips
+* ======================================*/
+.tooltip{
+   position: absolute;
+   padding: 10px 13px;
+   z-index: 2;
+   
+   color: #303030;
+   background-color: #f5f5b5;
+   border: 1px solid #DECA7E;
+   
+   font-family: sans-serif;
+   font-size: 12px;
+   line-height: 18px;
+   text-align: center;
+}
+
+   .tooltip h3{
+      margin: 0 0 5px;
+      text-align: left;
+   }
+
+
