@@ -1,4 +1,10 @@
 dev tag
 
+<<<<<<< HEAD
 ---
 dev stash function
+=======
+
+-
+stash 101
+>>>>>>> issue-101
