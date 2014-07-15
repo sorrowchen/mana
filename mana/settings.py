@@ -56,94 +56,18 @@ WSGI_APPLICATION = 'mana.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-    'mana': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'nova',
-         'USER': 'huming',
-         'PASSWORD': 'huming1',
-         'HOST': '192.168.39.112',
-         'PORT': '',
-    },
+import conf
 
-    'KEYSTONE': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'keystone',
-         'USER': 'huming',
-         'PASSWORD': 'huming1',
-         'HOST': '192.168.39.112',
-         'PORT': '',
-    },
-
-    'RegionOne_nova': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'nova',
-         'USER': 'huming',
-         'PASSWORD': 'huming1',
-         'HOST': '192.168.39.112',
-         'PORT': '',
-    },
-    'test_nova': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'nova',
-         'USER': 'root',
-         'PASSWORD': 'ztgame111',
-         'HOST': '192.168.39.111',
-         'PORT': '',
-    },
-
-    'RegionOne_neutron': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'neutron_linux_bridge',
-         'USER': 'huming',
-         'PASSWORD': 'huming1',
-         'HOST': '192.168.39.112',
-         'PORT': '',
-    },
-    'test_neutron': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'ovs_neutron',
-         'USER': 'root',
-         'PASSWORD': 'ztgame111',
-         'HOST': '192.168.39.111',
-         'PORT': '',
-    },
-
-
-}
+DATABASES =conf.DATABASES
 
 """
      Config for mana project
 """
-REGIONS=(
-	"test",
-	"RegionOne",
-)
-
-
-#KS_AUTH="192.168.39.111:5000"
-#KS_COMPUTE="192.168.39.110:8774"
-
-#KS_USER="admin"
-#KS_PWD="NanHui_Cloud@PWXadmin"
-#KS_TENANT="admin"
-#ADMIN_DEF_TID="7bd2a8b1b0374a42bc1b6cb9871b3fc1"
-
+REGIONS=conf.REGIONS
 
 BACK_UP_AZ="BACKUP"
 
-SYS_C2={
-	"KS_USER":"admin",
-	"KS_PWD":"NanHui_Cloud@PWXadmin",
-	"tenant_id":"7bd2a8b1b0374a42bc1b6cb9871b3fc1",
-	"KS_AUTH":"http://192.168.39.111:5000/v2.0",
-	"KS_TENANT":"admin"
-}
-
+SYS_C2=conf.SYS_C2
 
 
 # Internationalization
