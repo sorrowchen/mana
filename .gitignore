@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 
+*/.py[cod]
 nohup.out
 mana/conf.py
 
