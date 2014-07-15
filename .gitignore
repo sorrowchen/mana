@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 
 nohup.out
+mana/conf.py
 
 # C extensions
 *.so
