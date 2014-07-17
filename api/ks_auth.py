@@ -18,8 +18,6 @@ def getToken():
 
 	params1 = '{"auth": {"tenantName":"%(KS_TENANT)s", "passwordCredentials": {"username": "%(KS_USER)s", "password": "%(KS_PWD)s"}}}' % settings.SYS_C2
 
-	print params1
-
 	conn1.request("POST","%s/tokens" % KEYSTONE ,params1,headers1)
 
 	response1 = conn1.getresponse()
@@ -70,10 +68,16 @@ def getOsServices(apitoken,region):
 	response1 = conn1.getresponse()
 
 	rtn = response1.read()
+
 	conn1.close()
+
+	print "getOsServices:os-services->%s" % response1
+
 	#dd1 = json.loads(data1)
 	if not rtn:
-		return None	    
+		return None
+
+
 	
 	rtn = json.loads(rtn)
 	services={}

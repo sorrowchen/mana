@@ -172,8 +172,7 @@ GET_SERVICE_URL='SELECT url FROM endpoint WHERE interface="public" AND region=%s
 
 class KeyStoneManager:
     def getServiceUrl(self,service_name,region):
-	print region
-	print service_name
+	print "getServiceUrl:  region:%s,service_name:%s" % (region,service_name)
 	db_region=connections["KEYSTONE"]
 	cursor=db_region.cursor()
 	cursor.execute(GET_SERVICE_URL,(region,service_name))
