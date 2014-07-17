@@ -20,9 +20,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '9fp*i*gp!lxi1k5c5zo4&^2&hie5+_guoyzze0q#0**(gb^3#%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-TEMPLATE_DEBUG = True
+import socket
+
+if socket.gethostname()=="devstack":
+    DEBUG = True
+    TEMPLATE_DEBUG = True
+else:
+    DEBUG = False
+    TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = []
 
