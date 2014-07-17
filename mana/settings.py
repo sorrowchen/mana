@@ -58,7 +58,7 @@ WSGI_APPLICATION = 'mana.wsgi.application'
 
 import conf
 
-DATABASES =conf.DATABASES 
+DATABASES =conf.DATABASES
 
 """
      Config for mana project
@@ -94,6 +94,8 @@ STATICFILES_DIRS=(
 
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 #C2 CONF START
 
