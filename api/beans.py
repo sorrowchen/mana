@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import connections
+from django.db import connection
 
 class ComputeNode:
 	def __init__(self,vcpus,memory_mb,vcpus_used,memory_mb_used,hypervisor_hostname,running_vms):
@@ -81,6 +82,8 @@ class ComputeNodeMana:
 
 VIR_PORT="SELECT port_id FROM ipallocations WHERE ip_address=%s"
 
+GET_PORTID_BY_DEVICEID="SELECT id FROM ports WHERE device_id=%s"
+
 VIR_UUID="SELECT device_id FROM ports WHERE id=%s"
 
 GET_INSTANCE="SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id FROM instances WHERE uuid=%s"
@@ -103,6 +106,13 @@ class InstanceBean:
                 return "--uuid:%s,hostname:%s,vcpus:%s,mem:%s-- " % (self.uuid,self.hostname,self.vcpus,self.memory_mb)
 
 class InstanceManager:
+	def findPortIdByDevid(self,neutron_db,device_id):
+		cursor=neutron_db.cursor()
+		cursor.execute(GET_PORTID_BY_DEVICEID,device_id)
+		result=cursor.fetchone()
+		cursor.close()
+		return None if not result else result[0]
+
 	def findInstanceIdByIp(self,neutron_db,nova_db,ip):
 		cursor=neutron_db.cursor()
 		cursor.execute(VIR_PORT,ip)
@@ -255,6 +265,27 @@ class NetWorkManager:
 	    if not freeNodes.has_key(network.name):
 		freeNodes[network.name]=0
 	return freeNodes
+
+INSERT_NETWORK_FLOW="INSERT INTO c2_network_flow(`uuid`,`network_flow`,`region`) VALUES (%s,%s,%s)"
+
+class NetworkFlowManager:
+    def addNetworkFlow(self,uuid,network_flow,region):
+	cursor=connection.cursor()
+	try:
+	    cursor.execute(INSERT_NETWORK_FLOW,(uuid,network_flow,region))
+	except Exception,ex:
+	    print Exception,":",ex
+	    #traceback.print_exc()
+	    return False
+	finally:
+	    cursor.close()
+	return True
+
+
+
+		
+	
+
 
 
 

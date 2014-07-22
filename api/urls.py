@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     url(r'service-status/$','api.eva.getServiceStatus'),	
     url(r'az-list/$','api.eva.az_list'),
     url(r'free-ip-list/$','api.eva.ip_list'),
+    url(r'add-network-flow/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<su>[\w-]+)/$','api.su.limitSu'),
 )
