@@ -21,20 +21,11 @@ def controller(req,ip):
     else:
 	ip_addr=req.META.get("REMOTE_ADDR",None)
 	token=req.META.get("HTTP_C2_AUTH_TOKEN",None)
-
-	token1=req.META.get("Token",None)
-	token2=req.META.get("HTTP_Token",None)
-
-	token3=req.META.get("HTTP_token",None)
-
-	rtn="token:%s,token1:%s,token2:%s,token3:%s" % (token,token1,token2,token3)
-	"""
 	if not settings.C2_AUTH_TOKEN.has_key(token):
 	    return HttpResponse("Unknow auth token(%s) request." % token)
-	user=settings.C2_AUTH_TOKEN.has_key(token)
+	user=settings.C2_AUTH_TOKEN[token]
 	rtn=eva(ip)
 	EvaLog().addLog(user,ip,rtn,ip_addr)
-	"""
     return HttpResponse(rtn)
 
 def eva(ip):
