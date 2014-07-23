@@ -66,6 +66,8 @@ function showEvaLog(){
 	beforeSend: function (request)
         {
             request.setRequestHeader("C2_AUTH_TOKEN",token);
+	    request.setRequestHeader("Token",token);
+	    request.setRequestHeader("token",token);
         },
 	success:function(result){
 	    var content="<div class='marY8'>----- evacute ip:( "+ip+" ) ------</div>";
