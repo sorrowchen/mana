@@ -46,7 +46,7 @@ def eva(ip):
 		
 		if not childs:
 		    if isinstance(childs,list):
-			return "[] instance find in nova.instances by physical machine(%s)" % ip
+			return "[] instance find in nova.instances by physical machine(%s) in Region(%s)" % (ip,region)
 	       	    print "can't find it as a physical machine in db(%s)" % region
 		    continue
 		msg={}
