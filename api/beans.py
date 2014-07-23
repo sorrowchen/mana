@@ -25,7 +25,7 @@ GET_PHYSICAL="SELECT vcpus,memory_mb,vcpus_used,memory_mb_used,hypervisor_hostna
 
 GET_ALL_PHYSICAL="SELECT vcpus,memory_mb,vcpus_used,memory_mb_used,hypervisor_hostname,running_vms FROM compute_nodes WHERE deleted=0"
 
-GET_FILTER_PHYSICAL="SELECT vcpus,memory_mb,vcpus_used,memory_mb_used,hypervisor_hostname,running_vms FROM compute_nodes WHERE deleted=0 AND hypervisor_hostname IN (%s)"
+GET_FILTER_PHYSICAL="""SELECT vcpus,memory_mb,vcpus_used,memory_mb_used,hypervisor_hostname,running_vms FROM compute_nodes WHERE deleted=0 AND hypervisor_hostname IN (%s)"""
 
 class ComputeNodeMana:
 
@@ -64,7 +64,9 @@ class ComputeNodeMana:
 
     def getFilterComputeNodes(self,db,filters):
 	cursor=db.cursor()
-	cursor.execute(GET_FILTER_PHYSICAL,filters)
+	in_p=', '.join(list(map(lambda x: '%s', filters)))
+	sql=GET_FILTER_PHYSICAL % in_p
+	cursor.execute(sql,filters)
 	results=cursor.fetchall()
 	nodes=[]
 	for line in results:
@@ -268,6 +270,13 @@ class NetWorkManager:
 
 INSERT_NETWORK_FLOW="INSERT INTO c2_network_flow(`uuid`,`network_flow`,`region`) VALUES (%s,%s,%s)"
 
+GET_IP_BY_UUID="""
+	SELECT ports.id,ipallocations.ip_address,ipallocations.network_id,networks.`name` 
+	FROM ports LEFT JOIN ipallocations ON ports.id=ipallocations.port_id
+	LEFT JOIN networks ON ports.network_id=networks.id
+	WHERE ports.device_id=%s
+"""
+
 class NetworkFlowManager:
     def addNetworkFlow(self,uuid,network_flow,region):
 	cursor=connection.cursor()
@@ -280,6 +289,27 @@ class NetworkFlowManager:
 	finally:
 	    cursor.close()
 	return True
+
+    def getNetInfoByUUID(uuid,region):
+	db_region=connections[NEUTRON_DB(region)]
+	cursor=db_region.cursor()
+	cursor.execute(GET_IP_BY_UUID,uuid)
+	result=cursor.fetchall()
+	cursor.close()
+	nodes=[]
+	for line in results:
+		obj={}
+		obj["id"]=line[0]
+		obj["ip_address"]=line[1]
+		obj["network_id"]=line[2]
+		obj["network_name"]=line[3]
+		nodes.append(obj)
+	return nodes
+
+
+
+
+	
 
 
 

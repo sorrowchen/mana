@@ -92,15 +92,13 @@ def getOsServices(apitoken,region):
 	return services
 
 def connUrl(url):
-	print url
 	rtn=url.replace("http://","")
 	lastIndex=rtn.index("/")
 	return rtn[0:lastIndex]
 
 def getAvaZones(apitoken,region):
-	print "region %s" % region
 	Compute=KeyStoneManager().getServiceUrl("compute",region)
-	print Compute
+	print "getAvaZones compute ->%s" % Compute
 
 	headers1 = { "X-Auth-Token":apitoken, "Content-type":"application/json" }
 

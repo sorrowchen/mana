@@ -107,22 +107,27 @@ def getFilterAvailabilityHost(region,cpu,mem,filterHost=None,apitoken=None):
 
     zones=ks_auth.getAvaZones(apitoken,region)
     
-    if not zones.has_key(settings.BACK_UP_AZ):
+    if not zones.has_key(settings.BACK_UP_AZ) or not zones[settings.BACK_UP_AZ]:
 	print "Can't find backupAZ compute nodes"
 	return None
 
     backupAZ=zones[settings.BACK_UP_AZ]
 
-    filters=",".join(nodes)
-    nodes=ComputeNodeMana().getFilterComputeNodes(NOVA_DB(region))
+    #filters=",".join(backupAZ)
 
-    if not service:
-	return HttpResponse("Can't get service status.")
+    nodes=ComputeNodeMana().getFilterComputeNodes(NOVA_DB(region),backupAZ)
 
     for node in nodes:
 	if node.availability(cpu,mem):
 	    return node
     return None
+
+
+def test(req):
+    li=["ceph-node3","ceph-deploy"]
+    nodes=ComputeNodeMana().getFilterComputeNodes(NOVA_DB("RegionOne"),li)
+    print nodes
+    return HttpResponse("%s" % nodes)
 
 def getMachineInfoByIp(req,ip):
     apitoken=ks_auth.getToken()

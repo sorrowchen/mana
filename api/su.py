@@ -23,8 +23,14 @@ def limitSu(req,region,uuid,su):
 	#runScript()
     return HttpResponse("limitSu.")
 
-def runScript():
-    c2_ssh.conn(host,user,command)
+def runScript(region,uuid):
+    c2_ssh.conn(host,command)
+
+#def findIpByInstid(region,uuid):
+    #w
+
+
+
     
 
 

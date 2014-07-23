@@ -2,6 +2,7 @@ from django.conf.urls import patterns, include, url
 
 
 urlpatterns = patterns('',
+    url(r'test/$','api.eva.test'),
     url(r'index/$','api.views.index'),
     url(r'evacuate/(?P<host>[\w-]+)/$','api.views.evacuate'),
     url(r'face/$','api.views.face'),
