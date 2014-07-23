@@ -306,8 +306,21 @@ class NetworkFlowManager:
 		nodes.append(obj)
 	return nodes
 
+ADD_EVA_LOG="""
+INSERT INTO c2_eva_log(`user`,eva_ip,output,remote_ip) VALUES (%s,%s,%s,%s)
+"""
 
-
+class EvaLog:
+    def addLog(self,user,eva_ip,output,remote_ip):
+	cursor=connection.cursor()
+	try:
+	    cursor.execute(ADD_EVA_LOG,(user,eva_ip,output,remote_ip))
+	except Exception,ex:
+	    print Exception,":",ex
+	    return False
+	finally:
+	    cursor.close()
+	return True
 
 	
 

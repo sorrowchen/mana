@@ -1,7 +1,7 @@
 from django.db import connections
 from django.conf import settings
 from django.http import HttpResponse
-from beans import ComputeNodeMana,InstanceManager,KeyStoneManager,NetWorkManager
+from beans import ComputeNodeMana,InstanceManager,KeyStoneManager,NetWorkManager,EvaLog
 
 from django.shortcuts import render_to_response
 import json
@@ -15,12 +15,17 @@ REGIONS=settings.REGIONS
 nova_list=[region for region in DATABASES if(region.endswith("nova"))]
 neutron_list=[region for region in DATABASES if(region.endswith("neutron"))]
 
-
 def controller(req,ip):
     if not checker.IsIpAddr(ip):
 	rtn="check ip(%s) address failed" % ip
     else:
+	ip_addr=req.META.get("REMOTE_ADDR",None)
+	token=req.META.get("HTTP_C2_AUTH_TOKEN",None)
+	if not settings.C2_AUTH_TOKEN.has_key(token):
+	    return HttpResponse("Unknow auth token(%s) request." % token)
+	user=settings.C2_AUTH_TOKEN.has_key(token)
 	rtn=eva(ip)
+	EvaLog().addLog(user,ip,rtn,ip_addr)
     return HttpResponse(rtn)
 
 def eva(ip):

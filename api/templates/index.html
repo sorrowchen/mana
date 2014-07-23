@@ -5,6 +5,7 @@
 
 {% block content %}
 
+<div>
 <ul>
  <li><a href="/api/free-res/" target="_blank">resource usage</a></li>
  <li><a href="/api/service-status/" target="_blank">service status</a></li>
@@ -18,12 +19,18 @@
  <li>search machine info by ip:<input type="text" id="ipInfo"/> <input type="button" id="searchIp" value=" search " onclick="ipInfo()"/></li>
 
 
- <li>evacuate machine by ip:<input type="text" id="evaIp"/> <input type="button" id="searchIp" value=" evacuate " onclick="evacuate()"/></li>
-
-
-
+ <li>evacuate machine by ip:<input type="text" id="evaIp" value=""/>
+     input auth token:<input type="text" id="auth_token" value=""/>
+ <input type="button" id="searchIp" value=" evacuate " onclick="showEvaLog()"/>
+ </li>
 
 </ul>
+</div>
+
+<div id="display" class="darkbrown">
+
+</div>
+
 
 <script type="text/javascript">
 
@@ -37,6 +44,36 @@ function evacuate(){
    var ip=$("#evaIp").val();
    var url="/api/repair-eva/"+ip;
    window.open(url);
+}
+
+function showEvaLog(){
+
+   var ip=$("#evaIp").val();
+   var url="/api/repair-eva/"+ip;
+    
+   token=$("#auth_token").val();
+   if(token.length<10){
+        alert("未输入auth-token");
+	return;
+   }
+   var param = {};
+   $("#display").empty();
+   $.ajax({
+	url:url,
+	data:param,
+	async:false,
+	dataType:"html",
+	beforeSend: function (request)
+        {
+            request.setRequestHeader("C2_AUTH_TOKEN",token);
+        },
+	success:function(result){
+	    var content="<div class='marY8'>----- evacute ip:( "+ip+" ) ------</div>";
+	    content+="<div class='brown bold'>"+result+"</div>";
+	    content+="<div class='marY8'>-------------------------------------------</div>";
+	    $("#display").append(content);
+	}	
+    });
 }
 
 </script>

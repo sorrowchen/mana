@@ -105,7 +105,7 @@ STATIC_URL = '/static/'
 
 #C2 CONF START
 
-
+C2_AUTH_TOKEN=conf.C2_AUTH_TOKEN
 
 
 
