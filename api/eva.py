@@ -122,12 +122,9 @@ def getFilterAvailabilityHost(region,cpu,mem,filterHost=None,apitoken=None):
 	    return node
     return None
 
-
 def test(req):
-    li=["ceph-node3","ceph-deploy"]
-    nodes=ComputeNodeMana().getFilterComputeNodes(NOVA_DB("RegionOne"),li)
-    print nodes
-    return HttpResponse("%s" % nodes)
+    addr=req.META.get("REMOTE_ADDR",None)
+    return HttpResponse("%s" % addr)
 
 def getMachineInfoByIp(req,ip):
     apitoken=ks_auth.getToken()
