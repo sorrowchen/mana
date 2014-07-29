@@ -122,7 +122,7 @@ class InstanceManager:
 		cursor.close()
 		obj={}
 		if not result:
-			print "Can't find host ip by uuid(%s)" % ip
+			print "Can't find host ip by uuid(%s)" % uuid
 			return None
 		obj["host"]=result[0]
 		obj["host_ip"]=result[1]
