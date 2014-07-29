@@ -14,7 +14,11 @@
     <li><a href="/api/az-list/" target="_blank">az > compute nodes</a></li>
   -->
 
+    {% for region in regions %}
+	<li><a href="/api/free-ip/{{ region }}/" target="_blank">Region({{ region }}) free ip show</li>
+    {% endfor %}
  <li><a href="/api/free-ip-list/" target="_blank">free ip list</a></li>
+
 
  <li>search machine info by ip:<input type="text" id="ipInfo"/> <input type="button" id="searchIp" value=" search " onclick="ipInfo()"/></li>
 

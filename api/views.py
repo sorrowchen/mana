@@ -9,7 +9,10 @@ import datetime
 from django.conf import settings
 from django.db import connections
 
+REGIONS=settings.REGIONS
+
 def index(req):
+    regions=REGIONS
     return render_to_response('index.html',locals())
 
 
