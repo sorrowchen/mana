@@ -207,6 +207,14 @@ def ip_list(req):
     print regions
     print totals
     return render_to_response('ip_list.html',locals())
+
+def ip_list_region(req,region):
+    if not region in REGIONS:
+	return HttpResponse("""{"code":500,"message":"region doesn't exist"}""")		
+    neutron_db=NEUTRON_DB(region)
+    ips=NetWorkManager().getFreeIp(neutron_db)
+    obj=json.dumps(NetWorkManager().getAllTotalNum(ips,neutron_db))
+    return HttpResponse(obj)
 		
 
 

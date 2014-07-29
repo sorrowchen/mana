@@ -258,6 +258,7 @@ class NetWorkManager:
 
     def getTotalNum(self,nodes):
 	display={}
+	rtn={}
 	for node in nodes:
 	    if display.has_key(node.name):
 		total=display.get(node.name)
@@ -265,7 +266,8 @@ class NetWorkManager:
 		display[node.name]=total
 	    else:
 		display[node.name]=node.freeNum()
-	return display
+	    rtn[node.name]={"freeNum":display[node.name],"network_id":node.id}
+	return rtn
 
     def getAllNetWorks(self,db):
 	cursor=db.cursor()
@@ -285,7 +287,7 @@ class NetWorkManager:
 	networks=self.getAllNetWorks(db)
 	for network in networks:
 	    if not freeNodes.has_key(network.name):
-		freeNodes[network.name]=0
+		freeNodes[network.name]={"freeNum":0,"network_id":network.id}
 	return freeNodes
 
 
