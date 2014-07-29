@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import connections
 from django.db import connection
+from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON
 
 class ComputeNode:
 	def __init__(self,vcpus,memory_mb,vcpus_used,memory_mb_used,hypervisor_hostname,running_vms):
@@ -92,6 +93,11 @@ GET_INSTANCE="SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostn
 
 PHY_CHILDS="SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id FROM instances WHERE `host`=%s AND vm_state <> 'deleted'"
 
+
+GET_HOST_IP="""
+SELECT instances.`host`,compute_nodes.host_ip FROM instances LEFT JOIN compute_nodes ON instances.`host`=compute_nodes.hypervisor_hostname WHERE uuid=%s
+"""
+
 class InstanceBean:
 	def __init__(self,uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id_):
 		self.uuid=uuid
@@ -99,7 +105,7 @@ class InstanceBean:
 		self.vcpus=vcpus
 		self.vm_state=vm_state
 		self.host=host
-		self.user_id=user_id,
+		self.user_id=user_id
 		self.project_id=project_id
 		self.hostname=hostname
 		self.id=id_
@@ -108,6 +114,20 @@ class InstanceBean:
                 return "--uuid:%s,hostname:%s,vcpus:%s,mem:%s-- " % (self.uuid,self.hostname,self.vcpus,self.memory_mb)
 
 class InstanceManager:
+	
+	def getHostIp(self,nova_db,uuid):
+		cursor=nova_db.cursor()
+		cursor.execute(GET_HOST_IP,uuid)
+		result=cursor.fetchone()
+		cursor.close()
+		obj={}
+		if not result:
+			print "Can't find host ip by uuid(%s)" % ip
+			return None
+		obj["host"]=result[0]
+		obj["host_ip"]=result[1]
+		return obj
+
 	def findPortIdByDevid(self,neutron_db,device_id):
 		cursor=neutron_db.cursor()
 		cursor.execute(GET_PORTID_BY_DEVICEID,device_id)
@@ -268,7 +288,6 @@ class NetWorkManager:
 		freeNodes[network.name]=0
 	return freeNodes
 
-INSERT_NETWORK_FLOW="INSERT INTO c2_network_flow(`uuid`,`network_flow`,`region`) VALUES (%s,%s,%s)"
 
 GET_IP_BY_UUID="""
 	SELECT ports.id,ipallocations.ip_address,ipallocations.network_id,networks.`name` 
@@ -277,21 +296,15 @@ GET_IP_BY_UUID="""
 	WHERE ports.device_id=%s
 """
 
-class NetworkFlowManager:
-    def addNetworkFlow(self,uuid,network_flow,region):
-	cursor=connection.cursor()
-	try:
-	    cursor.execute(INSERT_NETWORK_FLOW,(uuid,network_flow,region))
-	except Exception,ex:
-	    print Exception,":",ex
-	    #traceback.print_exc()
-	    return False
-	finally:
-	    cursor.close()
-	return True
+GET_IP_BY_UUID_NETID="""
+	SELECT ports.id,ipallocations.ip_address,ipallocations.network_id,networks.`name` 
+	FROM ports LEFT JOIN ipallocations ON ports.id=ipallocations.port_id
+	LEFT JOIN networks ON ports.network_id=networks.id
+	WHERE ports.device_id=%s AND ports.network_id=%s
+"""
 
-    def getNetInfoByUUID(uuid,region):
-	db_region=connections[NEUTRON_DB(region)]
+class NetworkFlowManager:
+    def getNetInfoByUUID(self,uuid,db_region):
 	cursor=db_region.cursor()
 	cursor.execute(GET_IP_BY_UUID,uuid)
 	result=cursor.fetchall()
@@ -305,6 +318,22 @@ class NetworkFlowManager:
 		obj["network_name"]=line[3]
 		nodes.append(obj)
 	return nodes
+
+    def getNetInfoByUUIDAndNetId(self,db_region,uuid,network_id):
+	cursor=db_region.cursor()
+	cursor.execute(GET_IP_BY_UUID_NETID,(uuid,network_id))
+	result=cursor.fetchone()
+	cursor.close()
+	if not result:
+		print "Can't find network info by device_id(%s),break!" % uuid
+		return None
+	obj={}
+	obj["id"]=result[0]
+	obj["ip_address"]=result[1]
+	obj["network_id"]=result[2]
+	obj["network_name"]=result[3]
+	return obj
+
 
 ADD_EVA_LOG="""
 INSERT INTO c2_eva_log(`user`,eva_ip,output,remote_ip) VALUES (%s,%s,%s,%s)
@@ -322,10 +351,55 @@ class EvaLog:
 	    cursor.close()
 	return True
 
-	
+ADD_NET_FLOW="""
+INSERT INTO c2_network_flow(`uuid`,`network_flow`,`region`,`network_id`) VALUES (%s,%s,%s,%s)
+"""
 
+GET_NET_FLOWS="""
+SELECT network_flow,network_id FROM c2_network_flow WHERE uuid=%s AND region=%s
+"""
 
+ADD_SU_LOG="""
+INSERT INTO c2_su_log(`uuid`,`region`,`network_id`,`network_name`,`action`,`log`) VALUES (%s,%s,%s,%s,%s,%s)
+"""
 
+class NetWorkFlow:
+    def addNetWorkFlow(self,uuid,network_flow,region,network_id):
+	cursor=connection.cursor()
+	try:
+	    cursor.execute(ADD_NET_FLOW,(uuid,network_flow,region,network_id))
+	except Exception,ex:
+	    print Exception,":",ex
+	    return False
+	finally:
+	    cursor.close()
+	return True
+
+    def getNetWorkFlows(self,uuid,region):
+	cursor=connection.cursor()
+	cursor.execute(GET_NET_FLOWS,(uuid,region))
+	results=cursor.fetchall()
+	cursor.close()
+	nodes=[]
+	for line in results:
+		obj={}
+		obj["network_flow"]=line[0]
+		obj["network_id"]=line[1]
+		obj["uuid"]=uuid
+		obj["region"]=region
+		nodes.append(obj)
+	return nodes
+
+    def addLog(self,uuid,region,network_id,network_name,log,action):
+	cursor=connection.cursor()
+	try:
+	    cursor.execute(ADD_SU_LOG,(uuid,region,network_id,network_name,action,log))
+	except Exception,ex:
+	    print Exception,":",ex
+	    return False
+	finally:
+	    cursor.close()
+	return True
 		
 	
 

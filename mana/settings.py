@@ -107,8 +107,7 @@ STATIC_URL = '/static/'
 
 C2_AUTH_TOKEN=conf.C2_AUTH_TOKEN
 
-
-
+C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /root/test.sh"
 
 
 #C2 CONF END
