@@ -52,33 +52,46 @@ function evacuate(){
 
 function showEvaLog(){
 
-   var ip=$("#evaIp").val();
-   var url="/api/repair-eva/"+ip;
-    
+   var ips=$("#evaIp").val();
+
+   ip_list=ips.split(/,|;|，|。|；|、| /);
+
    token=$("#auth_token").val();
    if(token.length<10){
         alert("未输入auth-token");
 	return;
    }
-   var param = {};
+
    $("#display").empty();
-   $.ajax({
-	url:url,
-	data:param,
-	async:false,
-	dataType:"html",
-	beforeSend: function (request)
-        {
-            request.setRequestHeader("C2_AUTH_TOKEN",token);
-        },
-	success:function(result){
-	    var content="<div class='marY8'>----- evacute ip:( "+ip+" ) ------</div>";
-	    content+="<div class='brown bold'>"+result+"</div>";
-	    content+="<div class='marY8'>-------------------------------------------</div>";
-	    $("#display").append(content);
-	}	
-    });
+
+   for(var i=0;i<ip_list.length;i++)
+   {
+	var url="/api/repair-eva/"+ip_list[i];
+	var param = {};
+
+	   $.ajax({
+		url:url,
+		data:param,
+		async:false,
+		dataType:"html",
+		beforeSend: function (request)
+		{
+		    request.setRequestHeader("C2_AUTH_TOKEN",token);
+		},
+		success:function(result){
+		    var content="<div class='marY8'>----- evacute ip:( "+ip_list[i]+" ) ------</div>";
+		    content+="<div class='brown bold'>"+result+"</div>";
+		    content+="<div class='marY8'>-------------------------------------------</div><br><br>";
+		    $("#display").append(content);
+		}	
+	    });
+   }
+
 }
+
+
+
+
 
 </script>
 
