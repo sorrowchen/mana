@@ -215,6 +215,25 @@ def ip_list_region(req,region):
     ips=NetWorkManager().getFreeIp(neutron_db)
     obj=json.dumps(NetWorkManager().getAllTotalNum(ips,neutron_db))
     return HttpResponse(obj)
+
+def get_ava_network(req,region,nets):
+    if not region in REGIONS:
+	return HttpResponse("""{"code":500,"message":"region doesn't exist"}""")		
+    neutron_db=NEUTRON_DB(region)
+    ips=NetWorkManager().getFreeIp(neutron_db)
+    nodes=NetWorkManager().getAllTotalNum(ips,neutron_db)
+    array=nets.split("_")
+    obj=[]
+    for tag in array:
+	obj.append(getAvaNetworkId(nodes,tag))
+    return HttpResponse("""{"code":200,"message":"ok","data":"%s"}""" % ",".join(obj)) 
+
+def getAvaNetworkId(nodes,tag):
+    for k,v in nodes.items():
+	if tag in k and v["freeNum"]>0:
+	    return v["network_id"]
+    return 0
+
 		
 
 

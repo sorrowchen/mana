@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
-
+from framework import require_login
+from su import chgPwd
 
 urlpatterns = patterns('',
     url(r'index/$','api.views.index'),
@@ -13,8 +14,10 @@ urlpatterns = patterns('',
     url(r'service-status/$','api.eva.getServiceStatus'),	
     url(r'az-list/$','api.eva.az_list'),
     url(r'free-ip-list/$','api.eva.ip_list'),
+    url(r'ava-network/(?P<region>[\w-]+)/(?P<nets>[\w-]+)/$','api.eva.get_ava_network'),
     url(r'free-ip/(?P<region>[\w-]+)/$','api.eva.ip_list_region'),
     url(r'add-network-flow/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<network_flow>[\w-]+)/(?P<network_id>[\w-]+)/$','api.su.limitSu'),
     url(r'su/relimit/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<action>[\w-]+)/$','api.su.relimit'),
-    url(r'test/$','api.eva.test'),	
+    url(r'chgPwd/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<pwd>[\w-]+)/$',require_login(chgPwd)),
+    url(r'test/$','api.eva.test'),
 )

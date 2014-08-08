@@ -109,5 +109,6 @@ C2_AUTH_TOKEN=conf.C2_AUTH_TOKEN
 
 C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /root/test.sh"
 
+C2_CHANGE_VIR_PWD_SCRIPT="python /opt/SYNC/chg_pwd.py"
 
 #C2 CONF END

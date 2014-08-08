@@ -95,7 +95,7 @@ PHY_CHILDS="SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostnam
 
 
 GET_HOST_IP="""
-SELECT instances.`host`,compute_nodes.host_ip FROM instances LEFT JOIN compute_nodes ON instances.`host`=compute_nodes.hypervisor_hostname WHERE uuid=%s
+SELECT instances.`host`,compute_nodes.host_ip,instances.id FROM instances LEFT JOIN compute_nodes ON instances.`host`=compute_nodes.hypervisor_hostname WHERE uuid=%s
 """
 
 class InstanceBean:
@@ -126,6 +126,7 @@ class InstanceManager:
 			return None
 		obj["host"]=result[0]
 		obj["host_ip"]=result[1]
+		obj["id"]=result[2]
 		return obj
 
 	def findPortIdByDevid(self,neutron_db,device_id):
@@ -213,9 +214,9 @@ class KeyStoneManager:
 	return None if not result else result[0] % settings.SYS_C2
 
 
-GET_FREE_IP='SELECT networks.`name`,networks.`status`,subnets.id,ipavailabilityranges.first_ip,ipavailabilityranges.last_ip,networks.id,subnets.`name` as "subnet_name" FROM ipavailabilityranges,ipallocationpools,subnets,networks WHERE ipavailabilityranges.allocation_pool_id=ipallocationpools.id AND ipallocationpools.subnet_id=subnets.id AND subnets.network_id=networks.id ORDER BY networks.`name`,subnets.`name`'
+GET_FREE_IP='SELECT networks.`name`,networks.`status`,subnets.id,ipavailabilityranges.first_ip,ipavailabilityranges.last_ip,networks.id,subnets.`name` as "subnet_name" FROM ipavailabilityranges,ipallocationpools,subnets,networks WHERE ipavailabilityranges.allocation_pool_id=ipallocationpools.id AND ipallocationpools.subnet_id=subnets.id AND subnets.network_id=networks.id AND networks.`status`="ACTIVE" AND networks.admin_state_up=1 AND networks.shared=1 ORDER BY networks.`name`,subnets.`name`'
 
-GET_ALL_NETWORKS='SELECT id,name,status FROM networks WHERE `status`="ACTIVE" AND shared=1'
+GET_ALL_NETWORKS='SELECT id,name,status FROM networks WHERE `status`="ACTIVE" AND admin_state_up=1 AND shared=1'
 
 
 class NetWork:
@@ -289,7 +290,6 @@ class NetWorkManager:
 	    if not freeNodes.has_key(network.name):
 		freeNodes[network.name]={"freeNum":0,"network_id":network.id}
 	return freeNodes
-
 
 GET_IP_BY_UUID="""
 	SELECT ports.id,ipallocations.ip_address,ipallocations.network_id,networks.`name` 

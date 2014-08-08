@@ -31,6 +31,23 @@ def relimit(req,region,uuid,action):
     rtn=runScript(region,uuid,action)
     return HttpResponse("limitSu.%s" % rtn)
 
+def chgPwd(req,uuid,region,pwd):
+    hostInfo=InstanceManager().getHostIp(NOVA_DB(region),uuid)
+    if not hostInfo:
+	return HttpResponse("Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region))
+    host_ip=hostInfo["host_ip"]
+    instid=int(hostInfo["id"])
+    vir="instance-%s" % hex(instid)[2:].zfill(8)
+    script_name=settings.C2_CHANGE_VIR_PWD_SCRIPT
+    exe="%s %s %s" %(script_name,vir,pwd)
+    print "runScript--->host_ip:%s,exe:%s" % (host_ip,exe)
+    try:
+	LOG=c2_ssh.conn(host_ip,exe)
+    except Exception,ex:
+	print Exception,":",ex
+	LOG="SSH exception:%s" % str(ex)
+    return HttpResponse("%s" % LOG)
+
 def runScript(region,uuid,action):
     #find host ip
     hostInfo=InstanceManager().getHostIp(NOVA_DB(region),uuid)
