@@ -24,7 +24,7 @@ def limitSu(req,region,uuid,network_flow,network_id):
 	if addSuc:
 	    rtn=runScript(region,uuid,"INIT")
 	else:
-	    rtn={"add networkflow failed"}
+	    rtn={"msg":"add networkflow failed"}
     return HttpResponse("%s" % rtn)
 
 def relimit(req,region,uuid,action):
