@@ -169,7 +169,8 @@ def createSubnet(apitoken,region,cidr,network_id,tenant_id):
 		"ip_version":4,
 		"tenant_id":tenant_id,
 		"enable_dhcp":True,
-		"name":"%s-net" % cidr.split("/")[0]
+		"name":"%s-net" % cidr.split("/")[0],
+		"gateway_ip":None
    	 	}
 	}
 	param=json.dumps(data)

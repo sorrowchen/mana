@@ -404,16 +404,16 @@ class NetWorkFlow:
 		
 	
 C2_CIDR_GET="""
-SELECT id,cidr,tenant_id,network_id,region FROM c2_cidr_allocation WHERE tenant_id=%s AND  region=%s OR tenant_id is NULL ORDER BY tenant_id DESC,id ASC limit 1
+SELECT id,cidr,tenant_id,network_id,region FROM c2_cidr_allocation WHERE tenant_id=%s AND region=%s OR tenant_id is NULL AND    region =%s ORDER BY tenant_id DESC,id ASC limit 1
 """
 C2_CIDR_UPDATE="""
-UPDATE c2_cidr_allocation SET useTime=now(),tenant_id=%s,network_id=%s,region=%s WHERE id=%s
+UPDATE c2_cidr_allocation SET tenant_id=%s,network_id=%s WHERE id=%s AND region=%s 
 """
 
 class C2cidrManager:
     def getFreecidr(self,tenant_id,region):
 	cursor=connection.cursor()
-	cursor.execute(C2_CIDR_GET,(tenant_id,region))
+	cursor.execute(C2_CIDR_GET,(tenant_id,region,region))
 	result=cursor.fetchone()
 	cursor.close()
 	if not result:
@@ -431,7 +431,7 @@ class C2cidrManager:
     def useCidr(self,id_,tenantid,network_id,region):
 	cursor=connection.cursor()
 	try:
-	    cursor.execute(C2_CIDR_UPDATE,(tenantid,network_id,region,id_))
+	    cursor.execute(C2_CIDR_UPDATE,(tenantid,network_id,id_,region))
 	except Exception,ex:
 	    print Exception,":",ex
 	    return False
