@@ -81,9 +81,7 @@ def runScript(region,uuid,action):
 	
 
 def getUserNetwork(req,region,tenant_id,networkname):
-    obj=C2cidrManager().getFreecidr(tenant_id)
-    print networkname
-    print base64.standard_b64decode(networkname)
+    obj=C2cidrManager().getFreecidr(tenant_id,region)
     if not obj:
 	return HttpResponse("""{"code":500,"messaage":"Can't find cidr."}""") 
     if not obj["network_id"]:
@@ -100,7 +98,7 @@ def getUserNetwork(req,region,tenant_id,networkname):
 	if not data2 or data2.has_key("NeutronError"):
 	    return HttpResponse("""{"code":500,"messaage":"Can't get data from create-subnet api.","data":"%s"}""" % (None if not data2 else data2)) 
 	#update cidr
-	C2cidrManager().useCidr(int(obj["id"]),tenant_id,network)
+	C2cidrManager().useCidr(int(obj["id"]),tenant_id,network,region)
 	return HttpResponse("""{"code":200,"messaage":"ok","data":"%s"}""" % network)
     else:
 	return HttpResponse("""{"code":200,"messaage":"ok","data":"%s"}""" % obj["network_id"])
