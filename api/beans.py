@@ -424,7 +424,7 @@ class C2cidrManager:
 	obj["cidr"]=result[1]
 	obj["tenantid"]=result[2]
 	obj["network_id"]=result[3]
-	obj["region"]=result[4]obj["network_id"]=result[3]
+	obj["region"]=result[4]
 	return obj
 
 
