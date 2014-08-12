@@ -204,15 +204,14 @@ GET_SERVICE_URL='SELECT url FROM endpoint WHERE interface="public" AND region=%s
 
 
 class KeyStoneManager:
-    def getServiceUrl(self,service_name,region):
+    def getServiceUrl(self,service_name,region,tenant=settings.SYS_C2):
 	print "getServiceUrl:  region:%s,service_name:%s" % (region,service_name)
 	db_region=connections["KEYSTONE"]
 	cursor=db_region.cursor()
 	cursor.execute(GET_SERVICE_URL,(region,service_name))
 	result=cursor.fetchone()
 	cursor.close()
-	return None if not result else result[0] % settings.SYS_C2
-
+	return None if not result else result[0] % tenant
 
 GET_FREE_IP='SELECT networks.`name`,networks.`status`,subnets.id,ipavailabilityranges.first_ip,ipavailabilityranges.last_ip,networks.id,subnets.`name` as "subnet_name" FROM ipavailabilityranges,ipallocationpools,subnets,networks WHERE ipavailabilityranges.allocation_pool_id=ipallocationpools.id AND ipallocationpools.subnet_id=subnets.id AND subnets.network_id=networks.id AND networks.`status`="ACTIVE" AND networks.admin_state_up=1 AND networks.shared=1 ORDER BY networks.`name`,subnets.`name`'
 
@@ -404,12 +403,40 @@ class NetWorkFlow:
 	return True
 		
 	
+C2_CIDR_GET="""
+SELECT id,cidr,tenant_id,network_id FROM c2_cidr_allocation WHERE tenant_id=%s OR tenant_id is NULL ORDER BY tenant_id DESC,id ASC limit 1
+"""
+C2_CIDR_UPDATE="""
+UPDATE c2_cidr_allocation SET useTime=now(),tenant_id=%s,network_id=%s WHERE id=%s
+"""
+
+class C2cidrManager:
+    def getFreecidr(self,tenant_id):
+	cursor=connection.cursor()
+	cursor.execute(C2_CIDR_GET,tenant_id)
+	result=cursor.fetchone()
+	cursor.close()
+	if not result:
+	    print "Can't find cidr "
+	    return None
+	obj={}
+	obj["id"]=result[0]
+	obj["cidr"]=result[1]
+	obj["tenantid"]=result[2]
+	obj["network_id"]=result[3]
+	return obj
 
 
-
-
-
-
+    def useCidr(self,id_,tenantid,network_id):
+	cursor=connection.cursor()
+	try:
+	    cursor.execute(C2_CIDR_UPDATE,(tenantid,network_id,id_))
+	except Exception,ex:
+	    print Exception,":",ex
+	    return False
+	finally:
+	    cursor.close()
+	return True
 
 		
 

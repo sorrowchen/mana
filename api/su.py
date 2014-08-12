@@ -1,13 +1,14 @@
 from django.db import connections
 from django.conf import settings
 from django.http import HttpResponse
-from beans import ComputeNodeMana,InstanceManager,KeyStoneManager,NetWorkManager,NetworkFlowManager,NetWorkFlow
+from beans import ComputeNodeMana,InstanceManager,KeyStoneManager,NetWorkManager,NetworkFlowManager,NetWorkFlow,C2cidrManager
 
 from django.shortcuts import render_to_response
 import json
 import ks_auth
 from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON
 import c2_ssh
+import base64
 
 DATABASES=settings.DATABASES
 REGIONS=settings.REGIONS
@@ -78,7 +79,32 @@ def runScript(region,uuid,action):
 	NetWorkFlow().addLog(uuid,region,su["network_id"],netWorkName,LOG,action)
     return msg
 	
-	
+
+def getUserNetwork(req,region,tenant_id,networkname):
+    obj=C2cidrManager().getFreecidr(tenant_id)
+    print networkname
+    print base64.standard_b64decode(networkname)
+    if not obj:
+	return HttpResponse("""{"code":500,"messaage":"Can't find cidr."}""") 
+    if not obj["network_id"]:
+	apitoken=ks_auth.getToken()
+	if not apitoken:
+	    return HttpResponse("""{"code":500,"messaage":"Can't get token from keystone"}""")
+	#create network
+	data=ks_auth.createNetwork(apitoken,region,obj["id"],base64.standard_b64decode(networkname),tenant_id)
+	if not data or data.has_key("NeutronError"):
+	    return HttpResponse("""{"code":500,"messaage":"Can't get data from create-network api.","data":"%s"}""" % (None if not data else data)) 
+	network=data["network"]["id"]
+	#create subnet	
+	data2=ks_auth.createSubnet(apitoken,region,obj["cidr"],network,tenant_id)
+	if not data2 or data2.has_key("NeutronError"):
+	    return HttpResponse("""{"code":500,"messaage":"Can't get data from create-subnet api.","data":"%s"}""" % (None if not data2 else data2)) 
+	#update cidr
+	C2cidrManager().useCidr(int(obj["id"]),tenant_id,network)
+	return HttpResponse("""{"code":200,"messaage":"ok","data":"%s"}""" % network)
+    else:
+	return HttpResponse("""{"code":200,"messaage":"ok","data":"%s"}""" % obj["network_id"])
+
     
     
 

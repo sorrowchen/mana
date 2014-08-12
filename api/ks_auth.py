@@ -132,37 +132,58 @@ def getAvaZones(apitoken,region):
 	print zones
 	return zones
 
+def createNetwork(apitoken,region,segmentation_id,networkname,tenant_id):
+	Network=KeyStoneManager().getServiceUrl("network",region,{"tenant_id":tenant_id})
+	headers1 = { "X-Auth-Token":apitoken, "Content-type":"application/json" }
+	conn1 = httplib.HTTPConnection(connUrl(Network))
+	data={
+		"network": {
+        	"name": networkname,
+        	"admin_state_up": True,
+		"provider:segmentation_id":segmentation_id,
+		"provider:network_type":"vlan",
+		"provider:physical_network":"vlannet",
+		"tenant_id":tenant_id,
+		"shared":False
+   	 	}
+	}
+	param=json.dumps(data)
+	print param
+	print "%s/networks" % Network
+	conn1.request("POST","%s/v2.0/networks" % Network,param,headers1)
+	response1 = conn1.getresponse()
+	rtn = response1.read()
+	conn1.close()
+	if rtn:
+	    rtn = json.loads(rtn)
+	print rtn
+	return rtn
 
-"""
-apitoken = dd1['access']['token']['id']
+def createSubnet(apitoken,region,cidr,network_id,tenant_id):
+	Network=KeyStoneManager().getServiceUrl("network",region,{"tenant_id":tenant_id})
+	headers1 = { "X-Auth-Token":apitoken, "Content-type":"application/json" }
+	conn1 = httplib.HTTPConnection(connUrl(Network))
+	data={
+		"subnet": {
+        	"network_id": network_id,
+        	"cidr": cidr,
+		"ip_version":4,
+		"tenant_id":tenant_id,
+		"enable_dhcp":True,
+		"name":"%s-net" % cidr.split("/")[0]
+   	 	}
+	}
+	param=json.dumps(data)
+	print param
+	conn1.request("POST","%s/v2.0/subnets" % Network,param,headers1)
+	response1 = conn1.getresponse()
+	rtn = response1.read()
+	conn1.close()
+	#dd1 = json.loads(data1)
+	if rtn:
+	    rtn = json.loads(rtn)
+	print rtn
+	return rtn
 
-apitenant= dd1['access']['token']['tenant']['id']
 
-apiurl = dd1['access']['serviceCatalog'][0]['endpoints'][0]['publicURL']
-18
-apiurlt = urlparse(dd1['access']['serviceCatalog'][0]['endpoints'][0]['publicURL'])
-19
- 
-20
-url2 = apiurlt[1]
-21
-params2 = urllib.urlencode({})
-22
-headers2 = { "X-Auth-Token":apitoken, "Content-type":"application/json" }
-23
-conn2 = httplib.HTTPConnection(url2)
-24
-conn2.request("GET", "%s/servers" % apiurlt[2], params2, headers2)
-25
-response2 = conn2.getresponse()
-26
-data2 = response2.read()
-27
-dd2 = json.loads(data2)
-28
-conn2.close()
-29
-for i in range(len(dd2['servers'])):
-30
-    print dd2['servers'][i]['name']
-"""
+

@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from framework import require_login
-from su import chgPwd
+from su import chgPwd,getUserNetwork
 
 urlpatterns = patterns('',
     url(r'index/$','api.views.index'),
@@ -19,5 +19,6 @@ urlpatterns = patterns('',
     url(r'add-network-flow/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<network_flow>[\w-]+)/(?P<network_id>[\w-]+)/$','api.su.limitSu'),
     url(r'su/relimit/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<action>[\w-]+)/$','api.su.relimit'),
     url(r'chgPwd/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<pwd>[\w-]+)/$',require_login(chgPwd)),
+    url(r'get-user-network/(?P<region>[\w-]+)/(?P<tenant_id>[\w-]+)/(?P<networkname>[\w-]+)/$',getUserNetwork),
     url(r'test/$','api.eva.test'),
 )
