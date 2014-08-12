@@ -93,8 +93,7 @@ def getOsServices(apitoken,region):
 
 def connUrl(url):
 	rtn=url.replace("http://","")
-	lastIndex=rtn.index("/")
-	return rtn[0:lastIndex]
+	return rtn[:(rtn.index("/"))] if "/" in rtn else rtn
 
 def getAvaZones(apitoken,region):
 	Compute=KeyStoneManager().getServiceUrl("compute",region)
