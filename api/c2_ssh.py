@@ -19,7 +19,7 @@ def conn(host,command,user="root",pwd=None,port=22):
 	else:
 	    errot_list=json.dumps(error)
 	    print "An error happened by:%s" % errot_list
-	    return None
+	    return "An _error_ happened by:%s" % errot_list
 
 
 

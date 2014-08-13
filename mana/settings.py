@@ -107,7 +107,7 @@ STATIC_URL = '/static/'
 
 C2_AUTH_TOKEN=conf.C2_AUTH_TOKEN
 
-C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /root/test.sh"
+C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /opt/SYNC/test.sh"
 
 C2_CHANGE_VIR_PWD_SCRIPT="python /opt/SYNC/chg_pwd.py"
 

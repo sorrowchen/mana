@@ -6,9 +6,10 @@ from beans import ComputeNodeMana,InstanceManager,KeyStoneManager,NetWorkManager
 from django.shortcuts import render_to_response
 import json
 import ks_auth
-from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON
+from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON,RTN_200,RTN_500
 import c2_ssh
 import base64
+import framework
 
 DATABASES=settings.DATABASES
 REGIONS=settings.REGIONS
@@ -23,19 +24,24 @@ def limitSu(req,region,uuid,network_flow,network_id):
     for network in network_list:
 	addSuc=NetWorkFlow().addNetWorkFlow(uuid,network_flow,region,network)
 	if addSuc:
-	    rtn=runScript(region,uuid,"INIT")
+	    rtn=RTN_200 % runScript(region,uuid,"INIT")
 	else:
-	    rtn={"msg":"add networkflow failed"}
-    return HttpResponse("%s" % rtn)
+	    rtn=RTN_500 % "add networkflow failed"
+    return HttpResponse(rtn)
 
 def relimit(req,region,uuid,action):
+    if action not in ["RESTART","EVACUATE","INIT"]:
+	return  HttpResponse(RTN_500 % "Unknow limit su action request.")
     rtn=runScript(region,uuid,action)
-    return HttpResponse("limitSu.%s" % rtn)
+    return HttpResponse(rtn)
 
 def chgPwd(req,uuid,region,pwd):
+    user=framework.getApiUserByToken(req)
+    #if not user:
+	#return HttpResponse(RTN_500 % "Unknow auth token request.")
     hostInfo=InstanceManager().getHostIp(NOVA_DB(region),uuid)
     if not hostInfo:
-	return HttpResponse("Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region))
+	return HttpResponse(RTN_500 % ("Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region)))
     host_ip=hostInfo["host_ip"]
     instid=int(hostInfo["id"])
     vir="instance-%s" % hex(instid)[2:].zfill(8)
@@ -47,13 +53,13 @@ def chgPwd(req,uuid,region,pwd):
     except Exception,ex:
 	print Exception,":",ex
 	LOG="SSH exception:%s" % str(ex)
-    return HttpResponse("%s" % LOG)
+    return HttpResponse((RTN_200 % LOG) if "True" in LOG else (RTN_500 % LOG))
 
 def runScript(region,uuid,action):
     #find host ip
     hostInfo=InstanceManager().getHostIp(NOVA_DB(region),uuid)
     if not hostInfo:
-	return HttpResponse("Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region))
+	return HttpResponse(RTN_500 % "Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region))
     host_ip=hostInfo["host_ip"]
     su_list=NetWorkFlow().getNetWorkFlows(uuid,region)
     msg={}
@@ -77,7 +83,7 @@ def runScript(region,uuid,action):
 	    LOG="SSH exception:%s" % str(ex)
 	msg[uuid+"_"+netWorkName]=LOG
 	NetWorkFlow().addLog(uuid,region,su["network_id"],netWorkName,LOG,action)
-    return msg
+    return RTN_200 % msg
 	
 
 def getUserNetwork(req,region,tenant_id,networkname):
