@@ -24,7 +24,7 @@ def limitSu(req,region,uuid,network_flow,network_id):
     for network in network_list:
 	addSuc=NetWorkFlow().addNetWorkFlow(uuid,network_flow,region,network)
 	if addSuc:
-	    rtn=RTN_200 % runScript(region,uuid,"INIT")
+	    rtn=runScript(region,uuid,"INIT")
 	else:
 	    rtn=RTN_500 % "add networkflow failed"
     return HttpResponse(rtn)
