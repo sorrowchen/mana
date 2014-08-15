@@ -11,7 +11,7 @@ def conn(host,command,user="root",pwd=None,port=22):
 	PRIVATE_KEY='/root/.ssh/id_rsa'
         #key = paramiko.RSAKey.from_private_key(PRIVATE_KEY,password=None)
 	#ssh.load_system_host_keys()
-	ssh.connect(host,port,user,pwd)
+	ssh.connect(host,port,user,pwd,key_filename=PRIVATE_KEY)
 	print "------start read----"
 	stdin,stdout,stderr=ssh.exec_command(command)
 	print "------read end-------"
