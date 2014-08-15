@@ -43,6 +43,13 @@ def chgPwd(req,uuid,region,pwd):
     if not hostInfo:
 	return HttpResponse(RTN_500 % ("Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region)))
     host_ip=hostInfo["host_ip"]
+
+    #change private to public ip
+    compute_nodes_interface={"172.28.2":"172.28.1","172.29.204":"172.29.202"}
+    prex=".".join(host_ip.split(".")[:3])
+    if compute_nodes_interface.has_key(prex):
+	host_ip=host_ip.replace(prex,compute_nodes_interface[prex])
+
     instid=int(hostInfo["id"])
     vir="instance-%s" % hex(instid)[2:].zfill(8)
     script_name=settings.C2_CHANGE_VIR_PWD_SCRIPT
