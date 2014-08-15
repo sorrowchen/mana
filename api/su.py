@@ -56,7 +56,7 @@ def chgPwd(req,uuid,region,pwd):
     exe="%s %s %s" %(script_name,vir,pwd)
     print "runScript--->host_ip:%s,exe:%s" % (host_ip,exe)
     try:
-	LOG=c2_ssh.conn(host_ip,exe)
+	LOG=c2_ssh.sudo_conn(host_ip,exe)
     except Exception,ex:
 	print Exception,":",ex
 	LOG="SSH exception:%s" % str(ex)

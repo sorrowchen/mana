@@ -2,9 +2,11 @@
 #coding:utf-8
 import paramiko
 import json
-import os
 
-def conn(host,command,user="root",pwd=None,port=22):	
+host=sys.argv[1]
+command=sys.argv[2]
+
+def conn(user="root",pwd=None,port=22):	
 	ssh=paramiko.SSHClient()
 	ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 	print "host:%s,command:%s,user:%s,pwd:%s,port:%s" % (host,command,user,pwd,port)
@@ -22,11 +24,7 @@ def conn(host,command,user="root",pwd=None,port=22):
 	    print "An error happened by:%s" % errot_list
 	    return "An _error_ happened by:%s" % errot_list
 
-
-def sudo_conn(host,cmd):
-    stream=os.popen("sudo python sudo_ssh.py '%s' %s" % (host,cmd)).read()
-    return stream
-
+conn()
 
 
 
