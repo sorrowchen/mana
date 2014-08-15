@@ -7,12 +7,13 @@ from StringIO import StringIO
 
 PUBLIC_KEY='/root/.ssh/id_rsa'
 
-def conn(host,command,user="root",pwd=None,port=22):	
+def conn(host,command,user="root",port=22):	
 	ssh=paramiko.SSHClient()
 	ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 	print "host:%s,command:%s,user:%s,pwd:%s,port:%s" % (host,command,user,pwd,port)
-        key = paramiko.RSAKey.from_private_key(StringIO(PUBLIC_KEY), password=passphrase)
-	ssh.connect(host,port,user,pwd,pkey=key)
+        key = paramiko.RSAKey.from_private_key(StringIO(PUBLIC_KEY))
+	ssh.load_system_host_keys()
+	ssh.connect(host,port,user,pkey=key)
 	stdin,stdout,stderr=ssh.exec_command(command)
 	error=stderr.readlines()
 	output=stdout.readlines()
