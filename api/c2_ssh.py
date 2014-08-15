@@ -13,7 +13,9 @@ def conn(host,command,user="root",pwd=None,port=22):
 	ssh.load_system_host_keys()
 	ssh.connect(host,port,user,pwd,pkey=key)
 	stdin,stdout,stderr=ssh.exec_command(command)
+	print type(stderr)
 	error=stderr.read()
+	print type(error)
 	output=stdout.read()
 	ssh.close()
 	if not error:
