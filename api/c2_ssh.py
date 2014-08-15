@@ -5,9 +5,7 @@ import json
 import os
 from StringIO import StringIO
 
-PUBLIC_KEY="""
-ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAvRW4Zsw2fsNUEmHR/d3yaLC+5aqcDVrXZwtbGKr5jQalhuwdrezJxu7INXtuVa24o0S+0AxjXd9rdmKBAkR7e0OUgiAGm4HQEssA5iymKvqCcl+zVDUcytHSU87fG6JGuk5IJSdhxyvc2LclS5QZjvwZl/6DkrVQ/fslv1ekwYug6hbPoF8Ovvdi7dGvFZhw6i4alxvGuu3Mq1XsPZGG/fbQyK8gTsDZ6VjIoqZRP1D0TbXebz7S7CK1cYHJufKN6Q0WZALBIQI1u/XWoZdsRSqt/TAhkOUOg7S0jM8SSRO2JfRJbcx+iLbruFLj7kzgscBaWTgcG9lMyg3f5e8/qw== root@ypt_server10
-"""
+PUBLIC_KEY='/root/.ssh/id_rsa'
 
 def conn(host,command,user="root",pwd=None,port=22):	
 	ssh=paramiko.SSHClient()
