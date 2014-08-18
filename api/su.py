@@ -60,7 +60,7 @@ def chgPwd(req,uuid,region,pwd):
     except Exception,ex:
 	print Exception,":",ex
 	LOG="SSH exception:%s" % str(ex)
-    return HttpResponse((RTN_200 % LOG) if "True " in LOG else (RTN_500 % LOG))
+    return HttpResponse((RTN_200 % LOG) if "True\n" in LOG else (RTN_500 % LOG))
 
 def runScript(region,uuid,action):
     #find host ip
