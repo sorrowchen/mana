@@ -17,7 +17,7 @@ def conn(host,command,user="root",pwd=None,port=22):
 	if not error:
 	    ot_list=json.dumps(output)
 	    print ot_list
-	    return ot_list
+	    return output
 	else:
 	    errot_list=json.dumps(error)
 	    print "An error happened by:%s" % errot_list
