@@ -93,11 +93,12 @@ GET_INSTANCE="SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostn
 
 PHY_CHILDS="SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id FROM instances WHERE `host`=%s AND vm_state <> 'deleted'"
 
-
 GET_HOST_IP="""
 SELECT instances.`host`,compute_nodes.host_ip,instances.id FROM instances LEFT JOIN compute_nodes ON instances.`host`=compute_nodes.hypervisor_hostname WHERE uuid=%s
 """
-
+COUNT_USER_INST="""
+SELECT COUNT(*) FROM instances WHERE vm_state NOT IN ("rescued","resized","error","deleted") AND user_id=%s
+"""
 class InstanceBean:
 	def __init__(self,uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id_):
 		self.uuid=uuid
@@ -114,6 +115,16 @@ class InstanceBean:
                 return "--uuid:%s,hostname:%s,vcpus:%s,mem:%s-- " % (self.uuid,self.hostname,self.vcpus,self.memory_mb)
 
 class InstanceManager:
+
+	def getUserInstCount(self,nova_db,userid):
+		cursor=nova_db.cursor()
+		cursor.execute(COUNT_USER_INST,userid)
+		result=cursor.fetchone()
+		cursor.close()
+		if not result:
+			print "Can't find instances  by userid(%s)" % userid
+			return 0
+		return int(result[0])
 	
 	def getHostIp(self,nova_db,uuid):
 		cursor=nova_db.cursor()
@@ -201,8 +212,6 @@ class InstanceManager:
 
 GET_SERVICE_URL='SELECT url FROM endpoint WHERE interface="public" AND region=%s AND service_id =(SELECT id FROM service WHERE type=%s)'
 		
-
-
 class KeyStoneManager:
     def getServiceUrl(self,service_name,region,tenant=settings.SYS_C2):
 	print "getServiceUrl:  region:%s,service_name:%s" % (region,service_name)

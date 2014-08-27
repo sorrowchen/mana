@@ -20,5 +20,6 @@ urlpatterns = patterns('',
     url(r'su/relimit/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<action>[\w-]+)/$','api.su.relimit'),
     url(r'chgPwd/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<pwd>[\w-]+)/$',chgPwd),
     url(r'get-user-network/(?P<region>[\w-]+)/(?P<tenant_id>[\w-]+)/(?P<networkname>[=\w-]+)/$',getUserNetwork),
+    url(r'user-resource-quotas/(?P<region>[\w-]+)/(?P<userid>[\w-]+)/$','api.su.getUserStackInfo'),
     url(r'test/$','api.eva.test'),
 )
