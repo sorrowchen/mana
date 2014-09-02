@@ -127,7 +127,7 @@ def getUserStackInfo(req,region,userid):
     rtn["Volumes"]=0
     rtn["Load_Balancer"]=0
     rtn["ISO"]=0
-    return HttpResponse("""{"code":200,"message":"ok","data":"%s"}""" % rtn)
+    return HttpResponse("""{"code":200,"message":"ok","data":%s}""" % json.dumps(rtn))
 
 
 
