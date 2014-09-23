@@ -53,7 +53,7 @@ def loop_compute_nodes():
 		    rets.append(ret)
 		    ComputeNodeMana().addSaltLog(ret,"UPDATE_NODE")
 	    else:
-		print "start to install new minion---"
+		print "start to install new minion--- %s" % node
 		ret=install_new_minion(node,region)
 		rets.append(ret)
     print "end run loop_compute_nodes"
