@@ -16,8 +16,8 @@ class OneMinuteThread(Thread):
         self.stopped = event
 
     def run(self):
-	print "wait 60s"
-	time.sleep(60)
+	print "wait 1s"
+	#time.sleep(10)
 	loop_compute_nodes()
         #while not self.stopped.wait(60):
             #exe_one_minute()
