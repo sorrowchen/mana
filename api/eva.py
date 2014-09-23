@@ -101,7 +101,7 @@ def getAvailabilityHost(region,cpu,mem,filterHost=None,apitoken=None):
     for node in nodes:
 	if filterHost and filterHost==node.hypervisor_hostname:
 		continue
-	if service[node.hypervisor_hostname]=="down":
+	if not service.has_key(node.hypervisor_hostname) or service[node.hypervisor_hostname]=="down":
 		continue
 	if node.availability(cpu,mem):
 	    return node
