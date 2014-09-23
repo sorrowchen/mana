@@ -38,10 +38,12 @@ def init(req):
 
 def loop_compute_nodes():
     print "run loop_compute_nodes"
+    print REGIONS
     rets=[]
     for region in REGIONS:
 	minions=ComputeNodeMana().getSaltComputeNodes(region)
 	nodes=ComputeNodeMana().getAllComputeNodes(NOVA_DB(region))
+	print "region:%s,minions:%s,nodes:%s" % (region,len(minions),len(nodes))
 	for node in nodes:
 	    if minions.has_key("%s_%d"% (node.hypervisor_hostname,node.id)):
 		#installed
@@ -52,6 +54,7 @@ def loop_compute_nodes():
 	    else:
 		ret=install_new_minion(node,region)
 		rets.append(ret)
+    print "end run loop_compute_nodes"
     return rets
 
 #INSTALLED,ING,ERROR
