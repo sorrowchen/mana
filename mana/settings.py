@@ -27,8 +27,8 @@ if socket.gethostname()=="devstack":
     DEBUG = True
     TEMPLATE_DEBUG = True
 else:
-    DEBUG = False
-    TEMPLATE_DEBUG = False
+    DEBUG = True
+    TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -107,8 +107,8 @@ STATIC_URL = '/static/'
 
 C2_AUTH_TOKEN=conf.C2_AUTH_TOKEN
 
-C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /opt/SYNC/test.sh"
+C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /root/bandwith_limit.sh"
 
-C2_CHANGE_VIR_PWD_SCRIPT="python /opt/SYNC/chg_pwd.py"
+C2_CHANGE_VIR_PWD_SCRIPT="python /root/chg_pwd.py"
 
 #C2 CONF END
