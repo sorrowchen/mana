@@ -84,9 +84,9 @@ def install_new_minion(node,region):
     time.sleep(3)
 
     if not "_error_" in LOG:
-	rets.append(masterAcceptKey(node.hypervisor_hostname,rets))
+	rets.append(masterAcceptKey(node.hypervisor_hostname))
 	time.sleep(20)
-	LOG=syncModules2Minion(node.hypervisor_hostname,rets)
+	LOG=syncModules2Minion(node.hypervisor_hostname)
 	if "modules:" in LOG:
 	    state="INSTALLED"
 	rets.append(LOG)
@@ -108,7 +108,7 @@ def masterSync(hostname):
     ComputeNodeMana().addSaltLog(salt_log,"AcceptedKey_SYNC_MOD")
     return salt_log
 
-def masterAcceptKey(hostname,rets):
+def masterAcceptKey(hostname):
     salt_server=settings.C2_STATIC["Salt"]
     try:
 	LOG=c2_ssh.conn2(salt_server,CMD_MASTER_PASS % hostname)
@@ -119,10 +119,10 @@ def masterAcceptKey(hostname,rets):
 	LOG="SSH exception:%s" % str(ex)
 	state="ERROR"
     salt_log="Master accpect key(host:%s):%s" % (hostname,LOG)
-    rets.append(salt_log)
     ComputeNodeMana().addSaltLog(salt_log,"Accepted_Key")
+    return salt_log
 
-def syncModules2Minion(minionName,rets):
+def syncModules2Minion(minionName):
     salt_server=settings.C2_STATIC["Salt"]
     try:
 	LOG=c2_ssh.conn2(salt_server,CMD_SYNC_MASTER % minionName)
@@ -133,6 +133,5 @@ def syncModules2Minion(minionName,rets):
 	LOG="SSH exception:%s" % str(ex)
 	state="ERROR"
     salt_log="Master sync all(host:%s):%s" % (minionName,LOG)
-    rets.append(salt_log)
     ComputeNodeMana().addSaltLog(salt_log,"SYNC_ALL")
-
+    return salt_log
