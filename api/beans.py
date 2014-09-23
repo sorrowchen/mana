@@ -112,7 +112,7 @@ class InstanceBean:
 		self.id=id_
 
         def __repr__(self):
-                return "--uuid:%s,hostname:%s,vcpus:%s,mem:%s-- " % (self.uuid,self.hostname,self.vcpus,self.memory_mb)
+                return "--id,%s,uuid:%s,hostname:%s,vcpus:%s,mem:%s-- " % (self.id,self.uuid,self.hostname,self.vcpus,self.memory_mb)
 
 class InstanceManager:
 
