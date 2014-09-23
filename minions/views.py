@@ -10,7 +10,7 @@ from api.public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON,RTN_200,RTN_500,getConnIp
 
 import time
 
-REGIONS=settings.REGIONS
+REGIONS=settings.C2_STATIC["Regions"]
 
 """
 	LOG TYPE
