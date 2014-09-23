@@ -10,7 +10,7 @@ from api.public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON,RTN_200,RTN_500,getConnIp
 
 import time
 
-REGIONS=settings.REGIONS
+REGIONS=settings.C2_STATIC["Regions"]
 
 """
 	LOG TYPE
@@ -45,6 +45,7 @@ def loop_compute_nodes():
 	nodes=ComputeNodeMana().getAllComputeNodes(NOVA_DB(region))
 	print "region:%s,minions:%s,nodes:%s" % (region,len(minions),len(nodes))
 	for node in nodes:
+	    print "run check node:%s" % node
 	    if minions.has_key("%s_%d"% (node.hypervisor_hostname,node.id)):
 		#installed
 		ret=updateOrNot(node,minions.get("%s_%d"% (node.hypervisor_hostname,node.id)),region)
@@ -52,6 +53,7 @@ def loop_compute_nodes():
 		    rets.append(ret)
 		    ComputeNodeMana().addSaltLog(ret,"UPDATE_NODE")
 	    else:
+		print "start to install new minion---"
 		ret=install_new_minion(node,region)
 		rets.append(ret)
     print "end run loop_compute_nodes"
@@ -65,10 +67,10 @@ def updateOrNot(node,minion,region):
     return None
 
 def install_new_minion(node,region):
-    #ADD MINION TO DB
+    print "ADD MINION TO DB"
     ComputeNodeMana().addMinion(node,region)
     salt_server=settings.C2_STATIC["Salt"]
-    #REMOTE INSTALL MINION .
+    print "REMOTE INSTALL MINION."
     state="INSTALLED"
     rets=[]
     try:
@@ -82,11 +84,11 @@ def install_new_minion(node,region):
 	    rets.append("CMD_CONFIG_MINION:%s" % LOG)
 	    ComputeNodeMana().addSaltLog(LOG,"CONFIG_MINION")
     except Exception,ex:
-	print Exception,":",ex
 	LOG="SSH exception:%s" % str(ex)
+	print LOG
+	print Exception,":",ex
 	state="ERROR"
     time.sleep(3)
-
     if not "_error_" in LOG:
 	rets.append(masterAcceptKey(node.hypervisor_hostname))
 	time.sleep(20)
