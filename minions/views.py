@@ -37,6 +37,7 @@ def init(req):
     return HttpResponse("%s" % ret)
 
 def loop_compute_nodes():
+    print "run loop_compute_nodes"
     rets=[]
     for region in REGIONS:
 	minions=ComputeNodeMana().getSaltComputeNodes(region)

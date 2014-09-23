@@ -1,4 +1,5 @@
 from threading import Thread,Event
+from views import loop_compute_nodes
 
 def sys_startup():
     print "Sys_startup"
@@ -18,8 +19,10 @@ class OneMinuteThread(Thread):
         while not self.stopped.wait(60):
             exe_one_minute()
 
-stopFlag = Event()
-thread = OneMinuteThread(stopFlag)
+loop_compute_nodes()
+
+#stopFlag = Event()
+#thread = OneMinuteThread(stopFlag)
 #thread.start()
 # this will stop the timer
 #stopFlag.set()
