@@ -42,7 +42,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api'
+    'api',
+    'minions'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -110,5 +111,8 @@ C2_AUTH_TOKEN=conf.C2_AUTH_TOKEN
 C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /root/bandwith_limit.sh"
 
 C2_CHANGE_VIR_PWD_SCRIPT="python /root/chg_pwd.py"
+
+C2_STATIC=conf.STATIC
+
 
 #C2 CONF END

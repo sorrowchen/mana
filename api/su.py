@@ -6,7 +6,7 @@ from beans import ComputeNodeMana,InstanceManager,KeyStoneManager,NetWorkManager
 from django.shortcuts import render_to_response
 import json
 import ks_auth
-from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON,RTN_200,RTN_500
+from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON,RTN_200,RTN_500,getConnIp
 import c2_ssh
 import base64
 import framework
@@ -45,10 +45,7 @@ def chgPwd(req,uuid,region,pwd):
     host_ip=hostInfo["host_ip"]
 
     #change private to public ip
-    compute_nodes_interface={"172.28.2":"172.28.1","172.29.204":"172.29.202"}
-    prex=".".join(host_ip.split(".")[:3])
-    if compute_nodes_interface.has_key(prex):
-	host_ip=host_ip.replace(prex,compute_nodes_interface[prex])
+    host_ip=getConnIp(host_ip)
 
     instid=int(hostInfo["id"])
     vir="instance-%s" % hex(instid)[2:].zfill(8)
