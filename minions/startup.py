@@ -18,7 +18,7 @@ class OneMinuteThread(Thread):
     def run(self):
 	print "wait 1s"
 	#time.sleep(10)
-	loop_compute_nodes()
+	loop_compute_nodes2()
         #while not self.stopped.wait(60):
             #exe_one_minute()
 
@@ -28,6 +28,11 @@ thread.start()
 # this will stop the timer
 #stopFlag.set()
 
+
+def loop_compute_nodes2():
+    for i in range(100):
+	time.sleep(1)
+	print i
 
 
 
