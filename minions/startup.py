@@ -23,8 +23,8 @@ class OneMinuteThread(Thread):
             #exe_one_minute()
 
 stopFlag = Event()
-thread = OneMinuteThread(stopFlag)
-thread.start()
+#thread = OneMinuteThread(stopFlag)
+#thread.start()
 # this will stop the timer
 #stopFlag.set()
 
