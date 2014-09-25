@@ -24,7 +24,7 @@ REGIONS=settings.C2_STATIC["Regions"]
 """
 
 CMD_INIT_MINION="yum remove -y salt-minion;yum install -y salt-minion"
-CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;mkdir /opt/minion;service salt-minion restart"""
+CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;rm -rf /opt/minion;mkdir /opt/minion;service salt-minion restart"""
 
 CMD_MASTER_SYNC="salt-key -y -a '{0}';sleep 3;salt '{1}' saltutil.sync_all"
 
