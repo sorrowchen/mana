@@ -2,9 +2,7 @@ from threading import Thread,Event
 from views import loop_compute_nodes
 import time
 def sys_startup():
-	print "----------"
 	print "sys_startup"
-	print "----------"
 	#stopFlag = Event()
 	#thread = OneMinuteThread(stopFlag)
 	#thread.start()
@@ -26,6 +24,7 @@ class OneMinuteThread(Thread):
 	loop_compute_nodes()
         #while not self.stopped.wait(60):
             #exe_one_minute()
+
 
 #stopFlag = Event()
 #thread = OneMinuteThread(stopFlag)

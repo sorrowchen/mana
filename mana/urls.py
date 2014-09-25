@@ -4,10 +4,6 @@ from django.contrib import admin
 admin.autodiscover()
 from django.conf.urls.static import static
 
-from minions.startup import sys_startup
-
-sys_startup()
-
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'mana.views.home', name='home'),
