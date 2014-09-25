@@ -36,7 +36,7 @@ GET_SALT_PHYSICAL="SELECT compute_node_ip,compute_node_host,region,running_vms,n
 GET_FILTER_PHYSICAL="""SELECT vcpus,memory_mb,vcpus_used,memory_mb_used,hypervisor_hostname,running_vms FROM compute_nodes WHERE deleted=0 AND hypervisor_hostname IN (%s)"""
 
 ADD_Minion="""
-INSERT INTO salt_nodes(id,compute_node_ip,compute_node_host,region,running_vms,node_deleted,update_time) VALUES (%s,%s,%s,%s,%s,%s,now())
+INSERT INTO salt_nodes(id,compute_node_ip,compute_node_host,region,running_vms,salt_state,node_deleted,update_time) VALUES (%s,%s,%s,%s,%s,"INIT",%s,now())
 """
 
 UPDATE_MINION_VMS="""
@@ -91,10 +91,10 @@ class ComputeNodeMana:
 	    cursor.close()
 	return True
 
-    def addSaltLog(self,log,Type="SALT_INIT"):
+    def addSaltLog(self,log,Type):
 	cursor=connection.cursor()
 	try:
-	    cursor.execute(SALT_LOG,(log,Type))
+	    cursor.execute(SALT_LOG,(log,Type,))
 	except Exception,ex:
 	    print Exception,":",ex
 	    return False
