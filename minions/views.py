@@ -16,19 +16,19 @@ REGIONS=settings.C2_STATIC["Regions"]
 	LOG TYPE
         1.install minion
 	2.update /etc/salt/minion  sed 
+		sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion
+		sed -i "s/^#master: salt/master: 172\.30\.250\.22/1" /etc/salt/minion
 	3.service salt-minion restart
 	4.master allow minion key [salt-key -y -a HOSTNAME ]
 	5.master sync modules to minion 
 """
 
 CMD_INIT_MINION="yum install -y salt-minion"
-CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;mkdir /opt/minion;echo "%s salt">>/etc/hosts;service salt-minion restart"""
+CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;sed -i "s/^#master: salt/master: 172\.30\.250\.22/1" /etc/salt/minion;mkdir /opt/minion;service salt-minion restart"""
 CMD_MASTER_SYNC="salt-key -y -a '{0}';sleep 3;salt '{1}' saltutil.sync_all"
-
 
 CMD_MASTER_PASS="salt-key -y -a '%s'" 
 CMD_SYNC_MASTER="salt '%s' saltutil.sync_all"
-
 
 def init(req):
     ret=json.dumps(loop_compute_nodes())
