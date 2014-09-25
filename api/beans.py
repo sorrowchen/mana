@@ -140,7 +140,7 @@ class ComputeNodeMana:
 
     def getSaltComputeNodes(self,region):
 	cursor=connection.cursor()
-	cursor.execute(GET_SALT_PHYSICAL,region)
+	cursor.execute(GET_SALT_PHYSICAL,(region,))
 	results=cursor.fetchall()
 	cursor.close()
 	nodes={}
