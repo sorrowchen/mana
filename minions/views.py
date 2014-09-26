@@ -28,9 +28,13 @@ CMD_NO_KEY="salt-key -y -d '%s'"
 
 CMD_REMOVE_MINION="yum remove -y salt-minion"
 
+CMD_CLEAR_MINION_CONF="rm -rf /etc/salt"
+
+CMD_CLEAR_MODULE_CONF="rm -rf /opt/minion"
+
 CMD_INIT_MINION="yum install -y salt-minion"
 
-CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;rm -rf /opt/minion;mkdir /opt/minion;service salt-minion start"""
+CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;mkdir /opt/minion;service salt-minion start"""
 
 CMD_MASTER_PASS="salt-key -y -a '%s'" 
 CMD_SYNC_MASTER="salt '%s' saltutil.sync_all"
@@ -82,15 +86,32 @@ def install_new_minion(node,region):
     print "------------start to remove minion ------------------"
     try:
 	LOG=c2_ssh.conn2(getConnIp(node.host_ip),CMD_REMOVE_MINION)
-	print "CMD_REMOVE_MINION log:%s" % LOG
+	print "REMOVE_MINION log:%s" % LOG
     except Exception,ex:
-	LOG="CMD_REMOVE_MINION exception:%s" % str(ex)
-	ComputeNodeMana().addSaltLog("(%s)_CMD_REMOVE_MINION_ERROR:%s" % (node.hypervisor_hostname,LOG),"INSTALL_ERROR")
-	print Exception,"CMD_REMOVE_MINION:",ex
+	LOG="REMOVE_MINION exception:%s" % str(ex)
+	ComputeNodeMana().addSaltLog("(%s)_REMOVE_MINION_ERROR:%s" % (node.hypervisor_hostname,LOG),"INSTALL_ERROR")
+	print Exception,"REMOVE_MINION:",ex
     print "----------------finish remove minion --------------------------"
 
+    print "------------start to clear minion config------------------"
+    try:
+	LOG=c2_ssh.conn2(getConnIp(node.host_ip),CMD_CLEAR_MINION_CONF)
+	print "CLEAR_MINION_CONF log:%s" % LOG
+    except Exception,ex:
+	LOG="CLEAR_MINION_CONF exception:%s" % str(ex)
+	print Exception,"CLEAR_MINION_CONF:",ex
+    print "----------------finish clear minion config --------------------------"
 
+#CMD_CLEAR_MODULE_CONF
 
+    print "------------start to clear MODULE config------------------"
+    try:
+	LOG=c2_ssh.conn2(getConnIp(node.host_ip),CMD_CLEAR_MODULE_CONF)
+	print "CLEAR_MODULE_CONF log:%s" % LOG
+    except Exception,ex:
+	LOG="CLEAR_MODULE_CONF exception:%s" % str(ex)
+	print Exception,"CLEAR_MODULE_CONF:",ex
+    print "----------------finish clear MODULE config --------------------------"
 
     print "------------start to install minion ------------------"
     try:
