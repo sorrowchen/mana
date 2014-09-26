@@ -149,7 +149,7 @@ def install_new_minion(node,region):
 	rets.append(masterAcceptKey(node.hypervisor_hostname,node.id,region))
 	time.sleep(60)
 	LOG=syncModules2Minion(node.hypervisor_hostname,node.id,region)
-	if "modules:" in LOG:
+	if "modules" in LOG:
 	    state="INSTALLED"
 	    ComputeNodeMana().updateMinionState(state,node.id,region)
 	rets.append(LOG)
