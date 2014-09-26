@@ -37,7 +37,7 @@ CMD_INIT_MINION="yum install -y salt-minion"
 CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;mkdir /opt/minion;service salt-minion start"""
 
 CMD_MASTER_PASS="salt-key -y -a '%s'" 
-CMD_SYNC_MASTER="salt '%s' saltutil.sync_all"
+CMD_SYNC_MASTER="salt '%s' saltutil.sync_modules"
 
 def init(req):
     ret=json.dumps(loop_compute_nodes())
