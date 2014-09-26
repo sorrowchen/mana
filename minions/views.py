@@ -25,7 +25,7 @@ REGIONS=settings.C2_STATIC["Regions"]
 """
 
 CMD_INIT_MINION="yum remove -y salt-minion;yum install -y salt-minion"
-CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;sed -i "s/^#open_mode: False/open_mode: True/1" /etc/salt/minion;rm -rf /opt/minion;mkdir /opt/minion;service salt-minion restart"""
+CMD_CONFIG_MINION="""sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;service salt-minion start"""
 
 CMD_MASTER_SYNC="salt-key -y -a '{0}';sleep 3;salt '{1}' saltutil.sync_all"
 
@@ -72,13 +72,13 @@ def install_new_minion(node,region):
     print "ADD MINION TO DB"
     ComputeNodeMana().addMinion(node,region)
     salt_master=settings.C2_STATIC["Salt_master"]
-    print "REMOTE INSTALL MINION."
     state="INSTALLED"
     rets=[]
-
+    print "------------start to install minion ------------------"
     try:
 	LOG=c2_ssh.conn2(getConnIp(node.host_ip),CMD_INIT_MINION)
 	rets.append("CMD_INIT_MINION:%s" % LOG)
+	print "install log:%s" % LOG
 	ComputeNodeMana().addSaltLog("INSTALL_MINION:%s" % LOG,"INSTALL_MINION")
     except Exception,ex:
 	LOG="install_new_minion exception:%s" % str(ex)
@@ -86,18 +86,20 @@ def install_new_minion(node,region):
 	print LOG
 	print Exception,"install_new_minion:",ex
 	state="ERROR"
-
+    print "----------------finish install minion --------------------------"
+    print "----------------start to update minion config-------------------"
     try:
 	LOG=c2_ssh.conn2(getConnIp(node.host_ip),CMD_CONFIG_MINION % salt_master)
 	rets.append("CMD_CONFIG_MINION:%s" % LOG)
-	ComputeNodeMana().addSaltLog(LOG,"CONFIG_MINION")
+	print "update config log:%s" % LOG
+	ComputeNodeMana().addSaltLog("CONFIG_ERROR:%s" % LOG,"CONFIG_MINION")
     except Exception,ex:
 	LOG="CONFIG_MINION exception:%s" % str(ex)
 	ComputeNodeMana().addSaltLog("(%s)_CONFIG_MINION_ERROR:%s" % (node.hypervisor_hostname,LOG),"CONFIG_ERROR")
 	print LOG
 	print Exception,"CMD_CONFIG_MINION:",ex
 	state="ERROR"
-
+    print "----------------finish update minion config------------------------"
     if "_error_" in LOG:
 	print LOG
         ComputeNodeMana().updateMinionState("INIT_ERROR",node.id,region)
@@ -106,7 +108,7 @@ def install_new_minion(node,region):
     if not "_error_" in LOG:
 	rets.append(masterAcceptKey(node.hypervisor_hostname,node.id,region))
 	time.sleep(60)
-	LOG=syncModules2Minion(node.hypervisor_hostname,node.id,region)
+#	LOG=syncModules2Minion(node.hypervisor_hostname,node.id,region)
 	if "modules:" in LOG:
 	    state="INSTALLED"
 	    ComputeNodeMana().updateMinionState(state,node.id,region)
