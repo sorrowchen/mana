@@ -24,10 +24,10 @@ REGIONS=settings.C2_STATIC["Regions"]
 	5.master sync modules to minion 
 """
 
-CMD_INIT_MINION="yum remove -y salt-minion;yum install -y salt-minion"
-CMD_CONFIG_MINION="""sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;service salt-minion start"""
+CMD_NO_KEY="salt-key -y -d '%s'" 
 
-CMD_MASTER_SYNC="salt-key -y -a '{0}';sleep 3;salt '{1}' saltutil.sync_all"
+CMD_INIT_MINION="yum remove -y salt-minion;yum install -y salt-minion"
+CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;rm -rf /opt/minion;mkdir /opt/minion;service salt-minion start"""
 
 CMD_MASTER_PASS="salt-key -y -a '%s'" 
 CMD_SYNC_MASTER="salt '%s' saltutil.sync_all"
@@ -74,6 +74,7 @@ def install_new_minion(node,region):
     salt_master=settings.C2_STATIC["Salt_master"]
     state="INSTALLED"
     rets=[]
+    removeKey(node.hypervisor_hostname,node.id,region)
     print "------------start to install minion ------------------"
     try:
 	LOG=c2_ssh.conn2(getConnIp(node.host_ip),CMD_INIT_MINION)
@@ -108,7 +109,7 @@ def install_new_minion(node,region):
     if not "_error_" in LOG:
 	rets.append(masterAcceptKey(node.hypervisor_hostname,node.id,region))
 	time.sleep(60)
-#	LOG=syncModules2Minion(node.hypervisor_hostname,node.id,region)
+	LOG=syncModules2Minion(node.hypervisor_hostname,node.id,region)
 	if "modules:" in LOG:
 	    state="INSTALLED"
 	    ComputeNodeMana().updateMinionState(state,node.id,region)
@@ -129,6 +130,19 @@ def masterSync(hostname):
 	state="SYNC_ERROR"
     salt_log="Master accpect key and sync modules(host:%s):%s" % (hostname,LOG)
     ComputeNodeMana().addSaltLog(salt_log,"AcceptedKey_SYNC_MOD")
+    return salt_log
+
+def removeKey(hostname,node_id,region):
+    print "Start to remove key in master."
+    salt_server=settings.C2_STATIC["Salt"]
+    try:
+	LOG=c2_ssh.conn2(salt_server,CMD_NO_KEY % hostname)
+    except Exception,ex:
+	print Exception,"removeKey:",ex
+	LOG="remove key exception:%s" % str(ex)
+	ComputeNodeMana().updateMinionState("RMKEY_ERR",node_id,region)
+    salt_log="Master remove key(host:%s):%s" % (hostname,LOG)
+    print "finish remove key:%s;log:%s" % (hostname,salt_log)
     return salt_log
 
 def masterAcceptKey(hostname,node_id,region):

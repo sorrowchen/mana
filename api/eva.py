@@ -16,7 +16,7 @@ REGIONS=settings.REGIONS
 nova_list=[region for region in DATABASES if(region.endswith("nova"))]
 neutron_list=[region for region in DATABASES if(region.endswith("neutron"))]
 
-def controller(req,ip):
+def controller(req,ip,region=settings.REGIONS):
     if not checker.IsIpAddr(ip):
 	rtn="check ip(%s) address failed" % ip
     else:
@@ -24,16 +24,21 @@ def controller(req,ip):
 	user=framework.getApiUserByToken(req)
 	if not user:
 	    return HttpResponse(RTN_500 % "Unknow auth token request." )
-	rtn=eva(ip)
+	regions=[]
+	if not region ==settings.REGIONS:
+	    regions.append(region)
+	else:
+	    regions=region
+	rtn=eva(ip,regions)
 	EvaLog().addLog(user,ip,rtn,ip_addr)
     return HttpResponse(rtn)
 
-def eva(ip):
+def eva(ip,regions):
     apitoken=ks_auth.getToken()
     if not apitoken:
 	return RTN_500 % "Can't get token from keystone"
 
-    for region in REGIONS:
+    for region in regions:
 	if not NOVA(region) in nova_list:
 		print "DB %s_nova doesn't configure." % region
 		continue
