@@ -25,6 +25,13 @@
 
  <li>evacuate machine by ip:<input type="text" id="evaIp" value=""/>
      input auth token:<input type="text" id="auth_token" value=""/>
+
+<select id="region">
+    {% for region in regions %}
+	<option value="{{ region }}">{{ region }}</option>
+    {% endfor %}
+</selct>
+
  <input type="button" id="searchIp" value=" evacuate " onclick="showEvaLog()"/>
  </li>
 
@@ -66,7 +73,7 @@ function showEvaLog(){
 
    for(var i=0;i<ip_list.length;i++)
    {
-	var url="/api/repair-eva/"+ip_list[i];
+	var url="/api/repair-eva/"+ip_list[i]+"/"+$("#region").val()+"/";
 	var param = {};
 
 	   $.ajax({
