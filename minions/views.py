@@ -26,7 +26,10 @@ REGIONS=settings.C2_STATIC["Regions"]
 
 CMD_NO_KEY="salt-key -y -d '%s'" 
 
-CMD_INIT_MINION="yum remove -y salt-minion;yum install -y salt-minion"
+CMD_REMOVE_MINION="yum remove -y salt-minion"
+
+CMD_INIT_MINION="yum install -y salt-minion"
+
 CMD_CONFIG_MINION="""sed -i "s/^#cachedir: \/var\/cache\/salt\/minion/cachedir: \/opt\/minion/1" /etc/salt/minion;sed -i "s/^#master: salt/master: %s/1" /etc/salt/minion;rm -rf /opt/minion;mkdir /opt/minion;service salt-minion start"""
 
 CMD_MASTER_PASS="salt-key -y -a '%s'" 
@@ -75,6 +78,20 @@ def install_new_minion(node,region):
     state="INSTALLED"
     rets=[]
     removeKey(node.hypervisor_hostname,node.id,region)
+
+    print "------------start to remove minion ------------------"
+    try:
+	LOG=c2_ssh.conn2(getConnIp(node.host_ip),CMD_REMOVE_MINION)
+	print "CMD_REMOVE_MINION log:%s" % LOG
+    except Exception,ex:
+	LOG="CMD_REMOVE_MINION exception:%s" % str(ex)
+	ComputeNodeMana().addSaltLog("(%s)_CMD_REMOVE_MINION_ERROR:%s" % (node.hypervisor_hostname,LOG),"INSTALL_ERROR")
+	print Exception,"CMD_REMOVE_MINION:",ex
+    print "----------------finish remove minion --------------------------"
+
+
+
+
     print "------------start to install minion ------------------"
     try:
 	LOG=c2_ssh.conn2(getConnIp(node.host_ip),CMD_INIT_MINION)
@@ -88,6 +105,7 @@ def install_new_minion(node,region):
 	print Exception,"install_new_minion:",ex
 	state="ERROR"
     print "----------------finish install minion --------------------------"
+
     print "----------------start to update minion config-------------------"
     try:
 	LOG=c2_ssh.conn2(getConnIp(node.host_ip),CMD_CONFIG_MINION % salt_master)
