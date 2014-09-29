@@ -9,23 +9,30 @@ import datetime
 from django.conf import settings
 from django.db import connections
 
+import passlib
+import passlib.hash
+from public import RTN_200,RTN_500
+import framework
+from beans import C2Keystone
+
 REGIONS=settings.REGIONS
 
 def index(req):
     regions=REGIONS
     return render_to_response('index.html',locals())
 
+def chgPwd(req,userid,pwd):
+    ip_addr=req.META.get("REMOTE_ADDR",None)
+    user=framework.getApiUserByToken(req)
+    #user="test"
+    if not user:
+	return HttpResponse(RTN_500 % "Unknow auth token request." )
+    print "chgPwd(ip:%s)---%s update password=%s where userid=%s" % (ip_addr,user,pwd,userid)
+    password=passlib.hash.sha512_crypt.encrypt(pwd,rounds=40000)
+    C2Keystone().chgPwd(userid,password)
+    return HttpResponse(RTN_200 % "update password success")
 
 def evacuate(req,host='uuid'):
-    current_date=datetime.datetime.now()    
-    db=settings.DATABASES
-    pwd=make_password("huming")
-    mana1=connections['mana']
-    cursor=mana1.cursor()
-    cursor.execute("select count(*) from instances")
-    result=cursor.fetchone()
-    # connections['mana'].commit()
-    cursor.close()
     return render_to_response('eva.html',locals())
 
 import json

@@ -3,6 +3,17 @@ from django.db import connections
 from django.db import connection
 from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON
 
+
+UPDATE_USER_PWD="""
+UPDATE user SET password=%s WHERE id=%s
+"""
+
+class C2Keystone:
+    def chgPwd(self,userid,pwd):
+	cursor=connections["KEYSTONE_Master"].cursor()
+	cursor.execute(UPDATE_USER_PWD,(pwd,userid))
+	cursor.close()
+
 class ComputeNode:
 	def __init__(self,vcpus,memory_mb,vcpus_used,memory_mb_used,hypervisor_hostname,running_vms,deleted=0,host_ip=None,id=None):
 		self.vcpus=vcpus
