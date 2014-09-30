@@ -7,4 +7,4 @@ urlpatterns = patterns('',
 
 from runner.startup import sys_startup
 
-sys_startup()
+#sys_startup()

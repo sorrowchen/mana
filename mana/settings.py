@@ -109,9 +109,9 @@ STATIC_URL = '/static/'
 
 C2_AUTH_TOKEN=conf.C2_AUTH_TOKEN
 
-C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /root/bandwith_limit.sh"
+C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /opt/minion/extmods/modules/bandwith_limit.sh"
 
-C2_CHANGE_VIR_PWD_SCRIPT="python /root/chg_pwd.py"
+C2_CHANGE_VIR_PWD_SCRIPT="python /opt/minion/extmods/modules/chg_pwd"
 
 C2_STATIC=conf.STATIC
 
