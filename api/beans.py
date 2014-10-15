@@ -10,9 +10,18 @@ UPDATE user SET password=%s WHERE id=%s
 
 class C2Keystone:
     def chgPwd(self,userid,pwd):
-	cursor=connections["KEYSTONE_Master"].cursor()
-	cursor.execute(UPDATE_USER_PWD,(pwd,userid))
-	cursor.close()
+	try:
+	    conn=connections["KEYSTONE_Master"]
+	    cursor=conn.cursor()
+            cursor.execute(UPDATE_USER_PWD,(pwd,userid))
+	    conn.commit()
+        except Exception,ex:
+            print Exception,":",ex
+            return False
+    	finally:
+	    conn.close()
+            cursor.close()
+   	return True
 
 class ComputeNode:
 	def __init__(self,vcpus,memory_mb,vcpus_used,memory_mb_used,hypervisor_hostname,running_vms,deleted=0,host_ip=None,id=None):
