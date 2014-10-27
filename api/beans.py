@@ -467,7 +467,7 @@ class EvaLog:
 	try:
 	    cursor.execute(ADD_EVA_LOG,(user,eva_ip,output,remote_ip))
 	except Exception,ex:
-	    print Exception,":",ex
+	    print Exception,"ADD_EVA_LOG:",ex
 	    return False
 	finally:
 	    cursor.close()
@@ -517,7 +517,7 @@ class NetWorkFlow:
 	try:
 	    cursor.execute(ADD_SU_LOG,(uuid,region,network_id,network_name,action,log))
 	except Exception,ex:
-	    print Exception,":",ex
+	    print Exception,"ADD_SU_LOG:",ex
 	    return False
 	finally:
 	    cursor.close()
