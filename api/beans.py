@@ -240,7 +240,7 @@ class InstanceManager:
 	
 	def getHostIp(self,nova_db,uuid):
 		cursor=nova_db.cursor()
-		cursor.execute(GET_HOST_IP,uuid)
+		cursor.execute(GET_HOST_IP,(uuid,))
 		result=cursor.fetchone()
 		cursor.close()
 		obj={}
@@ -478,7 +478,7 @@ INSERT INTO c2_network_flow(`uuid`,`network_flow`,`region`,`network_id`) VALUES 
 """
 
 GET_NET_FLOWS="""
-SELECT network_flow,network_id FROM c2_network_flow WHERE uuid=%s AND region=%s
+SELECT network_flow,network_id FROM c2_network_flow WHERE id IN (SELECT MAX(id) FROM c2_network_flow WHERE uuid=%s AND region=%s GROUP BY network_id)
 """
 
 ADD_SU_LOG="""
