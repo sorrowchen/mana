@@ -8,6 +8,17 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
 	outline: 0;
 }
 
+.bg-main {
+	bottom: 0;
+	left: 0;
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 999;
+	background: url(./img/bg.png) no-repeat;
+	background-size: cover;
+}
+
 body, table, input, textarea, select, option {
 	 font: 15px 'Helvetica Neue',Helvetica,Arial,Sans-serif;
 }
@@ -70,10 +81,20 @@ body {
 	background: url(../img/main_bg.gif) repeat-y left;
 }
 #conts {
-	width: 799px;
+#	width: 799px;
 	background-color: #FFF;
 	margin-top:20px;
 }
+
+#conts a{
+	text-decoration: none;
+	color: #fff;
+	line-height: 2rem;
+	margin-bottom: 1rem;
+	text-align: center;
+}
+
+
 /*------------------------------------------------------------
 	patch
 ------------------------------------------------------------*/
