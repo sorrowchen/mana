@@ -113,10 +113,10 @@ def getUserNetwork(req,region,tenant_id,networkname):
     else:
 	return HttpResponse("""{"code":200,"message":"ok","data":"%s"}""" % obj["network_id"])
 
-def getUserStackInfo(req,region,userid):
+def getUserStackInfo(req,region,userid,tenantid):
     rtn={"Networks":1}
-    rtn["Instances"]=InstanceManager().getUserInstCount(NOVA_DB(region),userid)
-    rtn["Floating_IPs"]=0
+    rtn["Instances"]=InstanceManager().getUserInstCountByTenant(NOVA_DB(region),userid,tenantid)
+    rtn["Floating_IPs"]=InstanceManager().getIpsByTenant(NEUTRON_DB(region),userid,tenantid)
     rtn["Routers"]=0
     rtn["Security_Groups"]=0
     rtn["Key_Pairs"]=0

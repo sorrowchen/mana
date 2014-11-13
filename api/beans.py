@@ -211,6 +211,15 @@ SELECT instances.`host`,compute_nodes.host_ip,instances.id FROM instances LEFT J
 COUNT_USER_INST="""
 SELECT COUNT(*) FROM instances WHERE vm_state NOT IN ("rescued","resized","error","deleted") AND user_id=%s
 """
+
+COUNT_USER_INST_TENANT="""
+SELECT COUNT(*) FROM instances WHERE vm_state NOT IN ("rescued","resized","error","deleted") AND user_id=%s AND project_id=%s
+"""
+
+COUNT_USER_IPS="""
+SELECT count(ports.id) FROM ports,nova.instances WHERE ports.`status`="ACTIVE" AND ports.tenant_id=%s AND ports.network_id IN (SELECT id FROM networks WHERE `name` REGEXP 'WT|DX|BGP' AND admin_state_up=1 AND shared=1) AND ports.device_id=nova.instances.uuid AND nova.instances.user_id=%s
+"""
+
 class InstanceBean:
 	def __init__(self,uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id_):
 		self.uuid=uuid
@@ -228,9 +237,29 @@ class InstanceBean:
 
 class InstanceManager:
 
+	def getIpsByTenant(self,neutron_db,userid,tenanted):
+		cursor=neutron_db.cursor()
+		cursor.execute(COUNT_USER_IPS,(tenanted,userid))
+		result=cursor.fetchone()
+		cursor.close()
+		if not result:
+			print "Can't find instances  by userid(%s)" % userid
+			return 0
+		return int(result[0])
+
+	def getUserInstCountByTenant(self,nova_db,userid,tenanted):
+		cursor=nova_db.cursor()
+		cursor.execute(COUNT_USER_INST_TENANT,(userid,tenanted))
+		result=cursor.fetchone()
+		cursor.close()
+		if not result:
+			print "Can't find instances  by userid(%s)" % userid
+			return 0
+		return int(result[0])
+
 	def getUserInstCount(self,nova_db,userid):
 		cursor=nova_db.cursor()
-		cursor.execute(COUNT_USER_INST,userid)
+		cursor.execute(COUNT_USER_INST,(userid,))
 		result=cursor.fetchone()
 		cursor.close()
 		if not result:
