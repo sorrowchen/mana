@@ -229,7 +229,10 @@ def get_ava_network(req,region,nets):
     array=nets.split("_")
     obj=[]
     for tag in array:
-	obj.append(getAvaNetworkId(nodes,tag))
+	check=getAvaNetworkId(nodes,tag)
+	if check==0:
+	    return HttpResponse("""{"code":500,"message":"no free ip in %s."}""" % tag)
+	obj.append(check)
     return HttpResponse("""{"code":200,"message":"ok","data":"%s"}""" % ",".join(obj)) 
 
 def getAvaNetworkId(nodes,tag):
