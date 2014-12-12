@@ -15,7 +15,10 @@
   -->
 
     {% for region in regions %}
-	<li><a href="/api/free-ip/{{ region }}/" target="_blank">Region({{ region }}) free ip show</li>
+    <li>
+        <a href="/api/free-ip/{{ region }}/" target="_blank">Region({{ region }}) free ip show</a>
+        &nbsp;||&nbsp; <a href="/api/virs/{{ region }}/" target="_blank">ceilometer({{ region }})</a>
+    </li>
     {% endfor %}
  <li><a href="/api/free-ip-list/" target="_blank">free ip list</a></li>
 
@@ -28,7 +31,7 @@
 
 <select id="region">
     {% for region in regions %}
-	<option value="{{ region }}">{{ region }}</option>
+    <option value="{{ region }}">{{ region }}</option>
     {% endfor %}
 </selct>
 
@@ -50,7 +53,7 @@ function ipInfo(){
    var url="/api/machine/"+ip+"/";
    window.open(url);
 }
-   
+
 function evacuate(){
    var ip=$("#evaIp").val();
    var url="/api/repair-eva/"+ip;
@@ -66,32 +69,32 @@ function showEvaLog(){
    token=$("#auth_token").val();
    if(token.length<10){
         alert("未输入auth-token");
-	return;
+    return;
    }
 
    $("#display").empty();
 
    for(var i=0;i<ip_list.length;i++)
    {
-	var url="/api/repair-eva/"+ip_list[i]+"/"+$("#region").val()+"/";
-	var param = {};
+    var url="/api/repair-eva/"+ip_list[i]+"/"+$("#region").val()+"/";
+    var param = {};
 
-	   $.ajax({
-		url:url,
-		data:param,
-		async:false,
-		dataType:"html",
-		beforeSend: function (request)
-		{
-		    request.setRequestHeader("C2_AUTH_TOKEN",token);
-		},
-		success:function(result){
-		    var content="<div class='marY8'>----- evacute ip:( "+ip_list[i]+" ) ------</div>";
-		    content+="<div class='brown bold'>"+result+"</div>";
-		    content+="<div class='marY8'>-------------------------------------------</div><br><br>";
-		    $("#display").append(content);
-		}	
-	    });
+       $.ajax({
+        url:url,
+        data:param,
+        async:false,
+        dataType:"html",
+        beforeSend: function (request)
+        {
+            request.setRequestHeader("C2_AUTH_TOKEN",token);
+        },
+        success:function(result){
+            var content="<div class='marY8'>----- evacute ip:( "+ip_list[i]+" ) ------</div>";
+            content+="<div class='brown bold'>"+result+"</div>";
+            content+="<div class='marY8'>-------------------------------------------</div><br><br>";
+            $("#display").append(content);
+        }
+        });
    }
 
 }

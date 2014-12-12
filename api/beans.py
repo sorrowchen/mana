@@ -203,6 +203,8 @@ VIR_UUID="SELECT device_id FROM ports WHERE id=%s"
 
 GET_INSTANCE="SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id FROM instances WHERE uuid=%s"
 
+GET_ACTIVE_INSTANCE="""SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id FROM instances WHERE vm_state="active" ORDER BY `host`"""
+
 PHY_CHILDS="SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id FROM instances WHERE `host`=%s AND vm_state <> 'deleted'"
 
 GET_HOST_IP="""
@@ -325,6 +327,46 @@ class InstanceManager:
 		id_=result[8]
 	        instanceBean=InstanceBean(uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id_)
 		return instanceBean
+
+	def getInstanceByID(self,nova_db,uuid):
+		cur=nova_db.cursor()
+		cur.execute(GET_INSTANCE,(uuid,))
+		result=cur.fetchone()
+		cur.close()
+		if not result:
+			print "Can't find instance by uuid(%s),break!" % uuid
+			return None
+		uuid=result[0]
+		memory_mb=result[1]
+		vcpus=result[2]
+		vm_state=result[3]
+		host=result[4]
+		user_id=result[5]
+		project_id=result[6]
+		hostname=result[7]
+		id_=result[8]
+        	instanceBean=InstanceBean(uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id_)
+		return instanceBean
+	
+	def getallActiveInstances(self,nova_db):
+		cursor=nova_db.cursor()
+		cursor.execute(GET_ACTIVE_INSTANCE)
+		childs=[]
+		results=cursor.fetchall()
+		for result in results:
+			uuid=result[0]
+			memory_mb=result[1]
+			vcpus=result[2]
+			vm_state=result[3]
+			host=result[4]
+			user_id=result[5]
+			project_id=result[6]
+			hostname=result[7]
+			id_=result[8]
+        		instanceBean=InstanceBean(uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id_)
+			childs.append(instanceBean)
+		cursor.close()
+		return childs
 
 	def getChildrens(self,nova_db,ip):
 		node=ComputeNodeMana().getComputeNodeByIp(ip,nova_db)
@@ -457,8 +499,8 @@ GET_IP_BY_UUID_NETID="""
 class NetworkFlowManager:
     def getNetInfoByUUID(self,uuid,db_region):
 	cursor=db_region.cursor()
-	cursor.execute(GET_IP_BY_UUID,uuid)
-	result=cursor.fetchall()
+	cursor.execute(GET_IP_BY_UUID,(uuid,))
+	results=cursor.fetchall()
 	cursor.close()
 	nodes=[]
 	for line in results:

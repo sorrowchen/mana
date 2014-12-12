@@ -4,6 +4,10 @@ from su import chgPwd,getUserNetwork
 
 urlpatterns = patterns('',
     url(r'index/$','api.views.index'),
+    url(r'virs/(?P<region>[\w-]+)/$','api.views.virs'),
+    url(r'metric/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/$','api.metric.index'),
+    url(r'm1/$','api.metric.m1'),
+    url(r'statics/(?P<region>[\w-]+)/(?P<Meteric>[\w-]+)/(?P<UUID>[\w-]+)/(?P<duration>[\w-]+)/$','api.metric.statics'),
     url(r'evacuate/(?P<host>[\w-]+)/$','api.views.evacuate'),
     url(r'face/$','api.views.face'),
     url(r'eva/$','api.views.eva'),

@@ -7,31 +7,35 @@ from urlparse import urlparse
 from django.conf import settings
 import json
 from beans import KeyStoneManager
+import public
 from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON
+import utils
 
-def getToken():
-	#headers1 = { "X-Auth-Token":"422172848609489ea8126be290b4687f", "Content-type":"application/json" }
+
+def getTokenFromKS():
 	headers1 = {"Content-type":"application/json" }
-
 	KEYSTONE=settings.SYS_C2["KS_AUTH"]
 	conn1 = httplib.HTTPConnection(connUrl(KEYSTONE))
-
 	params1 = '{"auth": {"tenantName":"%(KS_TENANT)s", "passwordCredentials": {"username": "%(KS_USER)s", "password": "%(KS_PWD)s"}}}' % settings.SYS_C2
-
 	conn1.request("POST","%s/tokens" % KEYSTONE ,params1,headers1)
-
 	response1 = conn1.getresponse()
-
 	data1 = response1.read()
-
 	dd1 = json.loads(data1)
-
 	apitoken = dd1['access']['token']['id']
-	
-	print apitoken
-
+	expire=dd1['access']['token']['expires']
+	public.TOKEN["id"]=apitoken
+	public.TOKEN["expire"]=utils.utc2local(expire)
 	conn1.close()
 	return apitoken
+
+def getToken():#headers1 = { "X-Auth-Token":"422172848609489ea8126be290b4687f", "Content-type":"application/json" }
+    expire=public.TOKEN["expire"]
+    now=utils.getlocalstrtime()
+    if expire>now:
+        return public.TOKEN["id"]
+    else:
+        return getTokenFromKS()
+
 
 def evacuate(apitoken,region,server_id,targetHost):
 	

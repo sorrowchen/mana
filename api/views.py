@@ -11,9 +11,9 @@ from django.db import connections
 
 import passlib
 import passlib.hash
-from public import RTN_200,RTN_500
+from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON,RTN_200,RTN_500,getConnIp
 import framework
-from beans import C2Keystone
+from beans import C2Keystone,InstanceManager
 
 REGIONS=settings.REGIONS
 
@@ -51,4 +51,17 @@ def eva(req):
 	addr="addr"
         return HttpResponse("get ip %s,%s" % (ip,addr))
 
-	  
+def virs(req,region):
+    REGION=region
+    virs=InstanceManager().getallActiveInstances(NOVA_DB(region))
+    pre=""
+    RTN={}
+    for vir in virs:
+        key=vir.host
+        if pre=="" or not pre==key:
+            RTN[""+key]=[]
+        RTN[key].append(vir)
+        pre=key
+    return render_to_response('virs.html',locals())
+
+

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+
+{% block title %}Instances{% endblock %}
+
+
+{% block style %}
+<script type="text/javascript" src="/static/isotope.pkgd.min.js"></script>
+<style>
+#container {
+    /* either of these will work for horizontal Isotope layouts */
+    height: 80%;
+    height: 480px;
+}
+.element-item{
+    background: azure;
+    border: 1px solid green;
+}
+#container a{
+    color: cadetblue;
+}
+.ul{
+    padding:0px 0px 0px 5px;
+    list-style: none;
+}
+.pad5{
+    padding:5px;
+}
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+
+<div id="container">
+{% for node,virs in RTN.items %}
+    <div class="element-item">
+    <div class="pad5">
+    <span><b>{{ node }}</b></span>
+    {% for vir in virs %}
+        <ul>
+            <li><a href="/api/metric/{{ REGION }}/{{ vir.uuid }}/" target="_blank" class="metric">{{ vir.uuid }}</a></li>
+        </ul>
+    {% endfor %}
+    </div>
+    </div>
+{% endfor %}
+</div>
+<script type="text/javascript">
+    
+var $container = $('#container').isotope(
+                        {
+                            itemSelector: '.element-item',
+                            layoutMode: 'fitRows',
+                            cellsByRow:
+                            {
+                               columnWidth: 200,
+                               rowHeight: 150
+                             },
+                             masonry:
+                             {
+                                columnWidth:250
+                             }
+})
+
+
+</script>
+
+{% endblock %}

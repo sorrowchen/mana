@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+
+{% block title %}Metric{% endblock %}
+
+{% block content %}
+
+<div>
+    <ul>
+        <li>cpu_util</li>
+        <li>{{ token }}</li>
+        <li>{{ metricUrl }}</li>
+    </ul>
+</div>
+
+<div id="display" class="darkbrown">
+    
+</div>
+
+
+<script type="text/javascript">
+
+function evacuate(){
+    var ip=$("#evaIp").val();
+    var url="/api/repair-eva/"+ip;
+    window.open(url);
+}
+
+function showEvaLog(){
+    
+    var q={};
+    q.field="resource_id";
+    q.value="bcabcf22-b344-450e-be9c-4b74141433ef";
+    q.op="eq";
+    
+    var param={};
+    param.q=q;
+    param.duration="3h";
+    param.period=300;
+    param._=Math.random()*1000000;
+        
+    $.ajax({
+               url:url,
+               data:param,
+               async:false,
+               dataType:"html",
+               beforeSend: function (request)
+               {
+                   request.setRequestHeader("X-Auth-Token",token);
+               },
+               success:function(result){
+               var content="<div class='marY8'>----- evacute ip:( "+ip_list[i]+" ) ------</div>";
+               content+="<div class='brown bold'>"+result+"</div>";
+               content+="<div class='marY8'>-------------------------------------------</div><br><br>";
+               $("#display").append(content);
+               }	
+    });
+    
+}
+
+
+
+
+
+    </script>
+
+{% endblock %}
