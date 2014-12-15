@@ -310,12 +310,12 @@ function draw()
                                   var s="<table>";
                                   var pointFormat="";
                                   $.each(this.points, function (index) {
-                                         pointFormat+='<tr><td colspan="2" align="center"><b>'+this.series.name +'</b></td></tr>';
-                                         pointFormat+='<tr><td style="color:#333333">Avg: </td><td style="text-align: right"><b>'+this.y.toFixed(2)+''+Unit+'</b></td></tr>' +
-                                         '<tr><td style="color:#333333">Start: </td><td style="text-align: right;color:#985d3e;"><b>'+utcDisplay(chartVal(this.x,"period_start",index))+'</b></td></tr>'+
-                                         '<tr><td style="color:#333333">End: </td><td style="text-align: right;color:#985d3e;"><b>'+utcDisplay(chartVal(this.x,"period_end",index))+'</b></td></tr>'+
-                                         '<tr><td style="color:#333333">Max: </td><td style="text-align: right;color:#E6421A;"><b>'+chartVal(this.x,"max",index).toFixed(2)+''+Unit+'</b></td></tr>'+
-                                         '<tr><td style="color:#333333">Min: </td><td style="text-align: right;color:#985d3e;"><b>'+chartVal(this.x,"min",index).toFixed(2)+''+Unit+'</b></td></tr>';
+                                         pointFormat+='<tr><td colspan="2" align="center" style="color:'+this.series.color+';">'+this.series.name +'</td></tr>';
+                                         pointFormat+='<tr><td style="color:#333333">Avg: </td><td style="text-align: right">'+this.y.toFixed(2)+''+Unit+'</td></tr>' +
+                                         '<tr><td style="color:#333333">Start: </td><td style="text-align: right;color:#333333;">'+utcDisplay(chartVal(this.x,"period_start",index))+'</td></tr>'+
+                                         '<tr><td style="color:#333333">End: </td><td style="text-align: right;color:#333333;">'+utcDisplay(chartVal(this.x,"period_end",index))+'</td></tr>'+
+                                         '<tr><td style="color:#333333">Max: </td><td style="text-align: right;color:#333333;">'+chartVal(this.x,"max",index).toFixed(2)+''+Unit+'</td></tr>'+
+                                         '<tr><td style="color:#333333">Min: </td><td style="text-align: right;color:#333333;">'+chartVal(this.x,"min",index).toFixed(2)+''+Unit+'</td></tr>';
                                          });
                                   return s+pointFormat+"</table>";
                                   },
