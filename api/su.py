@@ -64,7 +64,7 @@ def runScript(region,uuid,action):
     hostInfo=InstanceManager().getHostIp(NOVA_DB(region),uuid)
     if not hostInfo:
 	return HttpResponse(RTN_500 % "Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region))
-    host_ip=hostInfo["host_ip"]
+    host_ip=getConnIp(hostInfo["host_ip"])
     su_list=NetWorkFlow().getNetWorkFlows(uuid,region)
     msg={}
     for su in su_list:
@@ -79,7 +79,7 @@ def runScript(region,uuid,action):
 	#command -------port_id network_flow start tapName 30 30
 	script_name=settings.C2_LIMIT_NETWORK_FLOW_SCRIPT
 	exe=script_name+" "+script_params
-	print "runScript--->host_ip:%s,exe:%s" % (host_ip,exe)
+	print "runScript(limit su)--->host_ip:%s,exe:%s" % (host_ip,exe)
 	try:
 	    LOG=c2_ssh.conn(host_ip,exe)
 	except Exception,ex:
