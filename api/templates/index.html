@@ -152,7 +152,11 @@ function createNetwork(){
                request.setRequestHeader("C2_AUTH_TOKEN",token);
             },
             success:function(result){
-               $("#display2").html(result);
+               if(result.code==200)
+               {
+                alert("创建成功");
+               }
+               $("#display2").html(result.data);
             }
         });
 }
