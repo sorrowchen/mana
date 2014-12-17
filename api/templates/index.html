@@ -3,10 +3,25 @@
 
 {% block title %}free resource{% endblock %}
 
+
+{% block style %}
+<script type="text/javascript" src="/static/jquery.base64.js"></script>
+{% endblock %}
+
 {% block content %}
 
 <div>
 <ul>
+ <li>
+     <input type="text" id="base64En" value=""/>
+     <input type="button" value=" >> base64.encode >> " onclick="encode64()"/>
+     <input type="text" id="base64EnVal" value="" placeholder="base64 encode value"/>
+ </li>
+ <li>
+     <input type="text" id="base64De" value=""/>
+     <input type="button" value=" >> base64.decode >> " onclick="decode64()"/>
+     <input type="text" id="base64DeVal" value="" placeholder="base64 decode value"/>
+ </li>
  <li><a href="/api/free-res/" target="_blank">resource usage</a></li>
  <li><a href="/api/service-status/" target="_blank">service status</a></li>
 
@@ -23,11 +38,11 @@
  <li><a href="/api/free-ip-list/" target="_blank">free ip list</a></li>
 
 
- <li>search machine info by ip:<input type="text" id="ipInfo"/> <input type="button" id="searchIp" value=" search " onclick="ipInfo()"/></li>
+ <li>ip查询:<input type="text" id="ipInfo" placeholder="IP"/> <input type="button" id="searchIp" value=" search " onclick="ipInfo()"/></li>
 
 
- <li>evacuate machine by ip:<input type="text" id="evaIp" value=""/>
-     input auth token:<input type="text" id="auth_token" value=""/>
+ <li>迁移机器ip:<input type="text" id="evaIp" value="" placeholder="IP"/>
+     token校验:<input type="text" id="auth_token" value="" placeholder="TOKEN"/>
 
 <select id="region">
     {% for region in regions %}
@@ -35,12 +50,24 @@
     {% endfor %}
 </selct>
 
- <input type="button" id="searchIp" value=" evacuate " onclick="showEvaLog()"/>
+ <input type="button" id="searchIp" value=" 迁移 " onclick="showEvaLog()"/>
  </li>
-
+ 
+ <li>
+     自建内网:<input type="text" id="n_tenantid"  placeholder="tenant_id"/><input type="text" id="n_networkname"  placeholder="network_name"/>
+     <input type="text" id="auth_token2" value="" placeholder="TOKEN"/>
+     <select id="region2">
+         {% for region in regions %}
+         <option value="{{ region }}">{{ region }}</option>
+         {% endfor %}
+         </selct>
+     <input type="button" id="createSelfNetwork" value=" 自建 " onclick="createNetwork()"/>
+ </li>
+ 
+ 
 </ul>
 </div>
-
+<div id="display2" class="darkbrown">
 <div id="display" class="darkbrown">
 
 </div>
@@ -99,10 +126,46 @@ function showEvaLog(){
 
 }
 
+function createNetwork(){
+    
+    var n_tenantid=$("#n_tenantid").val();
+    var n_networkname=$.base64.encode($("#n_networkname").val());
+    
+    token=$("#auth_token2").val();
+    if(token.length<10){
+        alert("未输入auth-token");
+        return;
+    }
+    
+    $("#display2").empty();
+    
+    var url="/api/get-token-network/"+$("#region2").val()+"/"+n_tenantid+"/"+n_networkname+"/";
+    var param = {};
+        
+    $.ajax({
+            url:url,
+            data:param,
+            async:false,
+            dataType:"json",
+            beforeSend: function (request)
+            {
+               request.setRequestHeader("C2_AUTH_TOKEN",token);
+            },
+            success:function(result){
+               $("#display2").html(result);
+            }
+        });
+}
 
+function encode64()
+{
+    $("#base64EnVal").val($.base64.encode($("#base64En").val()));
+}
 
-
-
+function decode64()
+{
+    $("#base64DeVal").val($.base64.decode($("#base64De").val()));
+}
 </script>
 
 {% endblock %}

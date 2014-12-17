@@ -91,6 +91,8 @@ def runScript(region,uuid,action):
 	
 
 def getUserNetwork(req,region,tenant_id,networkname):
+    if not region in REGIONS:
+        return HttpResponse("""{"code":500,"message":"X REG."}""")
     obj=C2cidrManager().getFreecidr(tenant_id,region)
     if not obj:
 	return HttpResponse("""{"code":500,"message":"Can't find cidr."}""") 
@@ -112,6 +114,13 @@ def getUserNetwork(req,region,tenant_id,networkname):
 	return HttpResponse("""{"code":200,"message":"ok","data":"%s"}""" % network)
     else:
 	return HttpResponse("""{"code":200,"message":"ok","data":"%s"}""" % obj["network_id"])
+
+def getUserNetwork2(req,region,tenant_id,networkname):
+	user=framework.getApiUserByToken(req)
+	if not user:
+	    return HttpResponse(RTN_500 % "Unknow auth token request." )
+	return getUserNetwork(req,region,tenant_id,networkname)
+
 
 def getUserStackInfo(req,region,userid,tenantid):
     rtn={"Networks":1}
