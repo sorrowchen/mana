@@ -9,40 +9,38 @@
 <script src="/static/highcharts.js"></script>
 <link href="/static/chart.css"  rel="stylesheet">
 <script src="/static/jquery.json-2.3.js"></script>
-<style>
-.chart-wp {
-        position: relative;
-        width: 100%;
-        height: 350px;
-        min-height: 350px;
-        max-height: 350px;
-        overflow: hidden;
-        width: 50%;
-        margin: 0 auto;
-}
 
+<link rel="stylesheet" href="/static/flexslider.css" type="text/css">
+<script src="/static/jquery.flexslider.js"></script>
+<style>
 .J-alarm-chart {
-    height: 350px;
-    width: 350px;
-    float: left;
-    border: 1px solid gainsboro;
-    margin: 5px;
+    height: 400px;
+    width: 59%;
 }
 .tools{
     display:none;
 }
-
+.slider {
+    width: 60%;
+    margin: 0 auto;
+}
 </style>
 {% endblock %}
 
 {% block content %}
 
-<div>
-    <div id="freeIpShow" class="chart-wp" >
-        {% for region in regions %}
-        <div id="pie_{{ region }}" class="J-alarm-chart"></div>
-        {% endfor %}
+<div style="width:100%;">
+  <section class="slider">
+    <div class="flexslider">
+        <ul class="slides">
+            {% for region in regions %}
+            <li>
+                <div id="pie_{{ region }}" class="J-alarm-chart"></div>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
+  </section>
     <div style="margin-top:5px;"><span onclick="displayTools()" style="color: darkgreen;text-decoration: line-through;">display tools</span></div>
 <ul>
     {% for region in regions %}
@@ -102,6 +100,11 @@
 
 
 <script type="text/javascript">
+
+$(window).load(function() {
+     $('.flexslider').flexslider();
+});
+
 function displayTools()
 {
     $(".tools").toggle();
