@@ -10,6 +10,8 @@ from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON,RTN_200,RTN_500,getConnIp
 import c2_ssh
 import base64
 import framework
+import time
+
 
 DATABASES=settings.DATABASES
 REGIONS=settings.REGIONS
@@ -25,6 +27,9 @@ def limitSu(req,region,uuid,network_flow,network_id):
 	addSuc=NetWorkFlow().addNetWorkFlow(uuid,network_flow,region,network)
 	if addSuc:
 	    rtn=runScript(region,uuid,"INIT")
+	    print "limitsu:",rtn
+	    if "_error500_" in rtn:
+		return HttpResponse(RTN_500 % rtn)
 	else:
 	    rtn=RTN_500 % "add networkflow failed"
     return HttpResponse(rtn)
@@ -61,16 +66,22 @@ def chgPwd(req,uuid,region,pwd):
 
 def runScript(region,uuid,action):
     #find host ip
+    time.sleep(5)
     hostInfo=InstanceManager().getHostIp(NOVA_DB(region),uuid)
+    print "xxx_",hostInfo["host_ip"]
     if not hostInfo:
-	return HttpResponse(RTN_500 % "Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region))
+	print "Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region)
+	return "_error500_ Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region)
     host_ip=getConnIp(hostInfo["host_ip"])
+    print "---hostip:",host_ip
     su_list=NetWorkFlow().getNetWorkFlows(uuid,region)
     msg={}
     for su in su_list:
 	 #find vir name by port
+	print "-region-%s| -uuid-%s| -action-%s|-network-%s,loop!!!" % (region,uuid,action,su["network_id"])
 	port=NetworkFlowManager().getNetInfoByUUIDAndNetId(NEUTRON_DB(su["region"]),su["uuid"],su["network_id"])
 	if not port:
+	    print "-region-%s| -uuid-%s| -action-%s|-network-%s,can't find port!!!" % (region,uuid,action,su["network_id"])
 	    continue
 	virName="tap"+port["id"][0:11]
 	netWorkName=port["network_name"]
@@ -87,7 +98,7 @@ def runScript(region,uuid,action):
 	    LOG="SSH exception:%s" % str(ex)
 	msg[uuid+"_"+netWorkName]=LOG
 	NetWorkFlow().addLog(uuid,region,su["network_id"],netWorkName,LOG,action)
-    return RTN_200 % msg
+    return """{"code":200,"message":"ok","data":%s}""" % json.dumps(msg)
 	
 
 def getUserNetwork(req,region,tenant_id,networkname):

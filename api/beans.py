@@ -208,7 +208,7 @@ GET_ACTIVE_INSTANCE="""SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project
 PHY_CHILDS="SELECT uuid,memory_mb,vcpus,vm_state,host,user_id,project_id,hostname,id FROM instances WHERE `host`=%s AND vm_state <> 'deleted'"
 
 GET_HOST_IP="""
-SELECT instances.`host`,compute_nodes.host_ip,instances.id FROM instances LEFT JOIN compute_nodes ON instances.`host`=compute_nodes.hypervisor_hostname WHERE uuid=%s
+SELECT instances.`host`,compute_nodes.host_ip,instances.id FROM instances,compute_nodes WHERE instances.`host`=compute_nodes.hypervisor_hostname AND instances.uuid=%s
 """
 COUNT_USER_INST="""
 SELECT COUNT(*) FROM instances WHERE vm_state NOT IN ("rescued","resized","error","deleted") AND user_id=%s
@@ -585,6 +585,7 @@ class NetWorkFlow:
 
     def addLog(self,uuid,region,network_id,network_name,log,action):
 	cursor=connection.cursor()
+	log="_%s_" % log
 	try:
 	    cursor.execute(ADD_SU_LOG,(uuid,region,network_id,network_name,action,log))
 	except Exception,ex:
