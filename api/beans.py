@@ -599,6 +599,12 @@ class NetWorkFlow:
 C2_CIDR_GET="""
 SELECT id,cidr,tenant_id,network_id,region FROM c2_cidr_allocation WHERE tenant_id=%s AND region=%s OR tenant_id is NULL AND    region =%s ORDER BY tenant_id DESC,id ASC limit 1
 """
+
+C2_FREE_CIDR_GET="""
+SELECT id,cidr,tenant_id,network_id,region FROM c2_cidr_allocation WHERE tenant_id is NULL AND  region =%s ORDER BY tenant_id DESC,id ASC limit 1
+"""
+
+
 C2_CIDR_UPDATE="""
 UPDATE c2_cidr_allocation SET tenant_id=%s,network_id=%s WHERE id=%s AND region=%s 
 """
@@ -620,6 +626,21 @@ class C2cidrManager:
 	obj["region"]=result[4]
 	return obj
 
+    def getMultiFreecidr(self,tenant_id,region):
+        cursor=connection.cursor()
+        cursor.execute(C2_FREE_CIDR_GET,(tenant_id,region,region))
+        result=cursor.fetchone()
+        cursor.close()
+        if not result:
+            print "Can't find cidr "
+            return None
+        obj={}
+        obj["id"]=result[0]
+        obj["cidr"]=result[1]
+        obj["tenantid"]=result[2]
+        obj["network_id"]=result[3]
+        obj["region"]=result[4]
+        return obj
 
     def useCidr(self,id_,tenantid,network_id,region):
 	cursor=connection.cursor()

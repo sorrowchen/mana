@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from framework import require_login
-from su import chgPwd,getUserNetwork,getUserNetwork2
+from su import chgPwd,getUserNetwork,getUserNetwork2,getMultiUserNetwork
 
 urlpatterns = patterns('',
     url(r'index/$','api.views.index'),
@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'su/relimit/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<action>[\w-]+)/$','api.su.relimit'),
     url(r'chgPwd/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/(?P<pwd>[\w-]+)/$',chgPwd),
     url(r'get-user-network/(?P<region>[\w-]+)/(?P<tenant_id>[\w-]+)/(?P<networkname>[=\w-]+)/$',getUserNetwork),
+    url(r'get-user-multi-network/(?P<region>[\w-]+)/(?P<tenant_id>[\w-]+)/(?P<networkname>[=\w-]+)/$',getMultiUserNetwork),
     url(r'get-token-network/(?P<region>[\w-]+)/(?P<tenant_id>[\w-]+)/(?P<networkname>[=\w-]+)/$',getUserNetwork2),
     url(r'user-resource-quotas/(?P<region>[\w-]+)/(?P<userid>[\w-]+)/(?P<tenantid>[\w-]+)/$','api.su.getUserStackInfo'),
     url(r'test/$','api.eva.test'),

@@ -126,6 +126,32 @@ def getUserNetwork(req,region,tenant_id,networkname):
     else:
 	return HttpResponse("""{"code":200,"message":"ok","data":"%s"}""" % obj["network_id"])
 
+def getMultiUserNetwork(req,region,tenant_id,networkname):
+    if not region in REGIONS:
+        return HttpResponse("""{"code":500,"message":"X REG."}""")
+    obj=C2cidrManager().getMultiFreecidr(tenant_id,region)
+    if not obj:
+        return HttpResponse("""{"code":500,"message":"Can't find cidr."}""")
+    if not obj["network_id"]:
+        apitoken=ks_auth.getToken()
+        if not apitoken:
+            return HttpResponse("""{"code":500,"message":"Can't get token from keystone"}""")
+        #create network
+        data=ks_auth.createNetwork(apitoken,region,obj["id"],base64.standard_b64decode(networkname),tenant_id)
+        if not data or data.has_key("NeutronError"):
+            return HttpResponse("""{"code":500,"message":"Can't get data from create-network api.","data":"%s"}""" % (None if not data else data))
+        network=data["network"]["id"]
+        #create subnet
+        data2=ks_auth.createSubnet(apitoken,region,obj["cidr"],network,tenant_id)
+        if not data2 or data2.has_key("NeutronError"):
+            return HttpResponse("""{"code":500,"message":"Can't get data from create-subnet api.","data":"%s"}""" % (None if not data2 else data2))
+        #update cidr
+        C2cidrManager().useCidr(int(obj["id"]),tenant_id,network,region)
+        return HttpResponse("""{"code":200,"message":"ok","data":"%s"}""" % network)
+    else:
+        return HttpResponse("""{"code":200,"message":"ok","data":"%s"}""" % obj["network_id"])
+
+
 def getUserNetwork2(req,region,tenant_id,networkname):
 	user=framework.getApiUserByToken(req)
 	if not user:
