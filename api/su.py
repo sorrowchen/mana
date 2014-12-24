@@ -68,10 +68,10 @@ def runScript(region,uuid,action):
     #find host ip
     time.sleep(5)
     hostInfo=InstanceManager().getHostIp(NOVA_DB(region),uuid)
-    print "xxx_",hostInfo["host_ip"]
     if not hostInfo:
 	print "Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region)
 	return "_error500_ Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region)
+    print "xxx_",hostInfo["host_ip"]
     host_ip=getConnIp(hostInfo["host_ip"])
     print "---hostip:",host_ip
     su_list=NetWorkFlow().getNetWorkFlows(uuid,region)

@@ -628,7 +628,7 @@ class C2cidrManager:
 
     def getMultiFreecidr(self,tenant_id,region):
         cursor=connection.cursor()
-        cursor.execute(C2_FREE_CIDR_GET,(tenant_id,region,region))
+        cursor.execute(C2_FREE_CIDR_GET,(region,))
         result=cursor.fetchone()
         cursor.close()
         if not result:
