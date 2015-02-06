@@ -11,8 +11,8 @@ ISOTIMEFORMAT='%Y-%m-%d %X'
 def getlocalstrtime():
     return time.strftime(ISOTIMEFORMAT,time.localtime(time.time()))
 
-def getNowAfterHours(hours=8):
-    after=datetime.datetime.now()+datetime.timedelta(hours=hours)
+def getNowAfterHours(hours=5):
+    after=datetime.datetime.now()+datetime.timedelta(minutes=hours)
     return after.strftime(LOCAL_FORMAT)
 
 def getUTCstrtime():
