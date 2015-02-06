@@ -28,12 +28,16 @@ def getTokenFromKS():
 	conn1.close()
 	return apitoken
 
-def getToken():#headers1 = { "X-Auth-Token":"422172848609489ea8126be290b4687f", "Content-type":"application/json" }
+def getToken():
     expire=public.TOKEN["expire"]
+    print "expire:",expire
     now=utils.getlocalstrtime()
+    print "now:",now
     if expire>now:
+	print "expire>now"
         return public.TOKEN["id"]
     else:
+	print "expire<now"
         return getTokenFromKS()
 
 
