@@ -10,6 +10,7 @@ import utils
 import base64,urllib,httplib,json,os
 import urllib
 from beans import InstanceManager,KeyStoneManager,NetworkFlowManager
+import public
 
 def index(req,uuid,region):
     token=ks_auth.getToken()
@@ -19,6 +20,7 @@ def index(req,uuid,region):
 
 def m1(req):
     token=ks_auth.getToken()
+    expire=public.TOKEN["expire"]
     return render_to_response('m1.html',locals())
 
 PERIOD={

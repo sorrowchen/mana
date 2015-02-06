@@ -11,6 +11,10 @@ ISOTIMEFORMAT='%Y-%m-%d %X'
 def getlocalstrtime():
     return time.strftime(ISOTIMEFORMAT,time.localtime(time.time()))
 
+def getNowAfterHours(hours=8):
+    after=datetime.datetime.now()+datetime.timedelta(hours=hours)
+    return after.strftime(LOCAL_FORMAT)
+
 def getUTCstrtime():
     return time.strftime(ISOTIMEFORMAT,time.gmtime(time.time()))
 
@@ -43,4 +47,3 @@ def msecs2utc(msecs):
     timeArray = time.localtime(msecs)
     otherStyleTime = time.strftime(UTC_FORMAT, timeArray)
     return otherStyleTime
-

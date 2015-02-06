@@ -24,7 +24,7 @@ def getTokenFromKS():
 	apitoken = dd1['access']['token']['id']
 	expire=dd1['access']['token']['expires']
 	public.TOKEN["id"]=apitoken
-	public.TOKEN["expire"]=utils.utc2local(expire)
+	public.TOKEN["expire"]=utils.getNowAfterHours()
 	conn1.close()
 	return apitoken
 
