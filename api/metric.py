@@ -18,7 +18,6 @@ def index(req,uuid,region):
     return render_to_response('metric.html',locals())
 
 def m1(req):
-    metricUrl=settings.C2_STATIC["Metering"]
     token=ks_auth.getToken()
     return render_to_response('m1.html',locals())
 
