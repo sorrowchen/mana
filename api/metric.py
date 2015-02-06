@@ -11,7 +11,9 @@ import base64,urllib,httplib,json,os
 import urllib
 from beans import InstanceManager,KeyStoneManager,NetworkFlowManager
 import public
+from django.views.decorators.clickjacking import xframe_options_exempt
 
+@xframe_options_exempt
 def index(req,uuid,region):
     token=ks_auth.getToken()
     UUID=uuid
