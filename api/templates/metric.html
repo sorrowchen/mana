@@ -54,6 +54,16 @@
                                     <div>磁盘读速率</div>
                                     <div><i class="icon-instance"></i>demo1</div>
                                 </div>
+                                
+                                <div class="row" id="network_incoming_bytes">
+                                    <div>网络进流量（累积）</div>
+                                    <div><i class="icon-instance"></i>demo1</div>
+                                </div>
+                                <div class="row" id="network_outgoing_bytes">
+                                    <div>网络出流量（累积）</div>
+                                    <div><i class="icon-instance"></i>demo1</div>
+                                </div>
+                                
                                 <!--ms-repeat-end-->
                             </div>
                         </div>
@@ -185,7 +195,7 @@ $(function(){
     $(".table-content>div").click(function(e)
     {
         var i= $(this).index();
-        metric=["cpu_util","network_incoming_bytes_rate","network_outgoing_bytes_rate","disk_write_bytes_rate","disk_read_bytes_rate"][i];
+        metric=["cpu_util","network_incoming_bytes_rate","network_outgoing_bytes_rate","disk_write_bytes_rate","disk_read_bytes_rate","network_incoming_bytes","network_outgoing_bytes"][i];
         $(".table-content>div").removeClass("selected");
         $(this).addClass("selected");
         e.preventDefault();
@@ -193,7 +203,7 @@ $(function(){
      });
 });
 
-var titles={"cpu_util":"CPU使用率","network_incoming_bytes_rate":"网络进流量","network_outgoing_bytes_rate":"网络出流量","disk_write_bytes_rate":"磁盘写速率","disk_read_bytes_rate":"磁盘读速率"}
+var titles={"cpu_util":"CPU使用率","network_incoming_bytes_rate":"网络进流量","network_outgoing_bytes_rate":"网络出流量","disk_write_bytes_rate":"磁盘写速率","disk_read_bytes_rate":"磁盘读速率","network_incoming_bytes":"网络进流量（累积）","network_outgoing_bytes":"网络出流量（累积）"}
     
 var metric="cpu_util";
 var UUID="{{ UUID }}";
