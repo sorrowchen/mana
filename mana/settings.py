@@ -27,8 +27,8 @@ if socket.gethostname()=="devstack":
     DEBUG = True
     TEMPLATE_DEBUG = True
 else:
-    DEBUG = True
-    TEMPLATE_DEBUG = True
+    DEBUG = False
+    TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
