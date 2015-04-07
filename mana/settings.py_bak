@@ -33,6 +33,9 @@ import socket
 DEBUG = True
 TEMPLATE_DEBUG = True
 
+
+
+
 ALLOWED_HOSTS = ["*"]
 
 
@@ -45,9 +48,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
-    'minions',
-    'runner',
+    'api'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -99,24 +100,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATICFILES_DIRS=(
-	os.path.join(BASE_DIR,'static'),
+	os.path.join(BASE_DIR,"static"),
 	'/opt/projects/mana/static',
 )
 
 
 STATIC_URL = '/static/'
 
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+#STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 #C2 CONF START
 
 C2_AUTH_TOKEN=conf.C2_AUTH_TOKEN
 
-C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /opt/minion/extmods/modules/bandwith_limit.sh"
+C2_LIMIT_NETWORK_FLOW_SCRIPT="sh /root/test.sh"
 
-C2_CHANGE_VIR_PWD_SCRIPT="python /opt/minion/extmods/modules/chg_pwd"
-
-C2_STATIC=conf.STATIC
-
+C2_CHANGE_VIR_PWD_SCRIPT="python /opt/SYNC/chg_pwd.py"
 
 #C2 CONF END

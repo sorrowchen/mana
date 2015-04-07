@@ -24,6 +24,8 @@ def m1(req):
     token=ks_auth.getToken()
     expire=public.TOKEN["expire"]
     li=json.dumps(public.TOKEN)
+    metricUrl = '1111'
+    expire  = '22222'
     return render_to_response('m1.html',locals())
 
 PERIOD={

@@ -241,6 +241,13 @@ def getAvaNetworkId(nodes,tag):
 	    return v["network_id"]
     return 0
 
-		
+def virs_list(req,region):
+    REGION=region
+    virs=InstanceManager().getallActiveInstances(NOVA_DB(region))
+    data = []
+    for vir in virs:
+        data.append(vir.uuid)
+    body = json.dumps({"code":200,"message":"ok","data":data})
+    return HttpResponse(body) 
 
 
