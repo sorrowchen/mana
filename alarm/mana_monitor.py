@@ -19,58 +19,117 @@ LOG = mana_log.GetLog(__name__)
 #logging.basicConfig(filename = os.path.join(os.getcwd(), LOG_FILE), level = logging.DEBUG) 
 #LOG = logging.getLogger(__name__)
 
+import  mana_conf
+CONF = mana_conf.GetConf()
 
-INTERVAL = 200   
-THRESHOLD = 5
 
-API_HOST = '127.0.0.1'
-API_PORT = 8080
-GET_ALL_INSTANCE_URL = '/api/virs_list/'
+#INTERVAL = 200   
+#THRESHOLD = 5
 
-GET_METRIC = '/api/statics/'
-ALARM_OBJ = 'network_incoming_bytes_rate/'
-ALARM_TIME = '3h/'
+#API_HOST = '127.0.0.1'
+#API_PORT = 8080
+#GET_ALL_INSTANCE_URL = '/api/virs_list/'
 
-REGIONS = ['shanghai', 'beijing']
+#GET_METRIC = '/api/statics/'
+#ALARM_OBJ = 'network_incoming_bytes_rate/'
+#ALARM_TIME = '3h/'
 
-unit_map = {"B/s":1,
-            "KB/s":1024, 
-            "MB/s":1024*1024,
-            "GB/s":1024*1024*1024
-       }
+#REGIONS = ['shanghai', 'beijing']
 
-RECEIVER = 'yangwanyuan@ztgame.com'
+#unit_map = {"B/s":1,
+#            "KB/s":1024, 
+#            "MB/s":1024*1024,
+#            "GB/s":1024*1024*1024
+#       }
+
+#RECEIVER = 'yangwanyuan@ztgame.com'
+unit_map = {
+            'cpu_util':{"%":1},
+            'network_incoming_bytes_rate':  {
+                                            "B/s":1,
+                                            "KB/s":1024, 
+                                            "MB/s":1024*1024,
+                                            "GB/s":1024*1024*1024
+                                            },
+            'network_outgoing_bytes_rate':  {
+                                            "B/s":1,
+                                            "KB/s":1024, 
+                                            "MB/s":1024*1024,
+                                            "GB/s":1024*1024*1024
+                                            },
+            'disk_write_bytes_rate':        {
+                                            "B/s":1,
+                                            "KB/s":1024, 
+                                            "MB/s":1024*1024,
+                                            "GB/s":1024*1024*1024
+                                            },
+            'disk_read_bytes_rate':          {
+                                            "B/s":1,
+                                            "KB/s":1024, 
+                                            "MB/s":1024*1024,
+                                            "GB/s":1024*1024*1024
+                                            },
+            'network_incoming_bytes':       {
+                                            "B":1,
+                                            "KB":1024, 
+                                            "MB":1024*1024,
+                                            "GB":1024*1024*1024
+                                            }, 
+            'network_outgoing_bytes':        {
+                                            "B":1,
+                                            "KB":1024, 
+                                            "MB":1024*1024,
+                                            "GB":1024*1024*1024
+                                            },                   
+}
 
 def run():
-    interval = INTERVAL
-    threshold = THRESHOLD
+    interval = CONF.get('cycletime')
+    #threshold = THRESHOLD
     LOG.info("begin to monitor,every %s seconds" %interval)
     while True:
         try:
             time_pre = time.time()
-            monitor(threshold)
+            monitor()
             time_now = time.time()
             time.sleep(interval + time_pre - time_now)
         except Exception, e:
             LOG.error(e)
 	
 
-def monitor(threshold):
-    for region in REGIONS:
-        instances = get_all_instance(region)
+def monitor():
+    regions = CONF.get('regions')
+    for region in regions:
+        instances = get_instances_from_api(region)
         for instance in instances:
-            datas = get_network_flow(region, instance)
-            for data in datas:
-                alarm(instance, data, threshold)
+            _monitor(region, instance)
+            #datas = get_network_flow(region, instance)
+            #for data in datas:
+            #    alarm(instance, data, threshold)
 
-def get_all_instance(region):
-    url = GET_ALL_INSTANCE_URL + region + '/' 
+def _monitor(region, instance):
+    for (alarm_obj, thd) in CONF.get('alarm_list'):
+        datas = get_datas_from_api(region, instance, alarm_obj)
+        #LOG.info("region:%s, instance:%s, alarm_obj:%s, datas:%s" %(region, instance, alarm_obj, datas))
+        threshold = float(thd)
+        for data in datas:
+            alarm(instance, data, alarm_obj, threshold)
+            #LOG.info(data)
+            #alarm(instance, data, threshold)
+
+
+
+def get_instances_from_api(region):
+    url = CONF.get('url').get('get_all_instance_url') %region
+    api_host = CONF.get('api_host')
+    api_port = CONF.get('api_port')
+    #url = GET_ALL_INSTANCE_URL + region + '/' 
     try:
         #con = httplib.HTTPConnection(API_HOST, API_PORT, timeout=30)
         #con.request('GET', url)
         #response = con.getresponse()
         #instances = simplejson.loads(response.read()).get('data')
-        httpclient = HttpCon(API_HOST, API_PORT, url, "GET")
+        httpclient = HttpCon(api_host, api_port, url, "GET")
         body = httpclient.get()
         if body:
             instances = simplejson.loads(body).get('data')
@@ -78,10 +137,13 @@ def get_all_instance(region):
         LOG.error(e)
     return instances 
 
-def get_network_flow(region, instance):
-    url = GET_METRIC + region + '/' + ALARM_OBJ + instance + '/' + ALARM_TIME
+def get_datas_from_api(region, instance, alarm_obj):
+    url = CONF.get('url').get('get_metric') %(region, alarm_obj, instance)
+    api_host = CONF.get('api_host')
+    api_port = CONF.get('api_port')
+    #url = GET_METRIC + region + '/' + ALARM_OBJ + instance + '/' + ALARM_TIME
     try:
-        httpclient = HttpCon(API_HOST, API_PORT, url, "POST")
+        httpclient = HttpCon(api_host, api_port, url, "POST")
         body = httpclient.get()
         if body:
             data = simplejson.loads(body)
@@ -91,31 +153,38 @@ def get_network_flow(region, instance):
     return data
 
 
-def alarm(instance, data, threshold):
+def alarm(instance, data, alarm_obj, threshold):
     bodys = data.get('data')
     name = data.get('name')
     if bodys == []:
         #print "%s's network %s:  NO data" %(instance, name)
-        LOG.info("%s's network %s:  NO data" %(instance, name))
+        #LOG.info("%s's %s is %s:  NO data" %(instance, alarm_obj, name))
         return False
     #print data
     for body in bodys:
         unit = body.get('unit')
-        multiple = unit_map.get(unit)
+        multiple = unit_map.get(alarm_obj).get(unit)
+        multiple = 1
         max_data = body.get('max')
         if max_data*multiple >  threshold:
-            message =  "%s's network %s:   data is to high %s %s"%(instance, name, max_data, unit)
+            message =  "Instance %s's %s device is %s:   data is to high %s %s"%(instance, alarm_obj, name, max_data, unit)
             #print message
             LOG.info(message)
-            send_message(instance,  message)
+            send_message(instance, alarm_obj, message)
             return True
 
-def send_message(instance,  message):
-    emailclient = Email()
-    msg = message
-    subject = 'network alarm!!!'
-    receiver = RECEIVER
-    emailclient.sendmsg(receiver, subject, msg)
+def send_message(instance,  subject, message):
+
+    email_host = CONF.get('email_host')
+    email_port = CONF.get('email_port')
+    sender = CONF.get('email_sender')
+    sender_pwd = CONF.get('email_sender_pwd')
+    receivers = CONF.get('email_receiver')
+    emailclient = Email(email_host, email_port, sender, sender_pwd)
+    for receiver  in receivers:
+        msg = message
+        subject = subject +  '   alarm!!!' 
+        emailclient.sendmsg(receiver, subject, msg)
 
     
 

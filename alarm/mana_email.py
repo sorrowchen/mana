@@ -2,11 +2,14 @@ import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
 
-EMAIL_HOST = 'mail.ztgame.com'
-EMAIL_PORT = 25
+#import mana_conf
+#CONF = mana_conf.GetConf()
 
-SENDER = 'yangwanyuan@ztgame.com'
-SENDER_PW = 'ywy8861@000'
+#EMAIL_HOST = 'mail.ztgame.com'
+#EMAIL_PORT = 25
+
+#SENDER = 'yangwanyuan@ztgame.com'
+#SENDER_PW = 'ywy8861@000'
 
 
 import mana_log
@@ -16,11 +19,11 @@ LOG = mana_log.GetLog(__name__)
 #LOG = logging.getLogger(__name__)
 
 class Email():
-    def __init__(self):
-        self.email_host = EMAIL_HOST 
-        self.email_port = EMAIL_PORT
-        self.sender = SENDER
-        self.sender_pw = SENDER_PW
+    def __init__(self, email_host, email_port, email_sender, email_sender_pwd):
+        self.email_host = email_host
+        self.email_port = email_port
+        self.sender = email_sender
+        self.sender_pw = email_sender_pwd
 
 
     def sendmsg(self, receiver, subject, msg):
@@ -30,7 +33,7 @@ class Email():
             msgbody = MIMEText('<html><h1>%s</h1></html>'%msg, 'html', 'utf-8')
             msgbody['Subject'] = Header(subject, 'utf-8')
             self.handle.sendmail(self.sender, receiver, msgbody.as_string())
-            LOG.info("send message to receiver success")
+            LOG.info("send message %s to receiver %s success " %(subject, receiver))
         except Exception, e:
             print e;
 
@@ -41,9 +44,17 @@ class Email():
 
 
 if __name__ == "__main__":
-    emailclient = Email()
+    EMAIL_HOST = 'mail.ztgame.com'
+    EMAIL_PORT = 25
+
+    #SENDER = 'yangwanyuan@ztgame.com'
+    #SENDER_PW = 'ywy8861@000'
+
+    SENDER = 'autowork@ztgame.com'
+    SENDER_PW = 'ak123$%^'
+    emailclient = Email(EMAIL_HOST, EMAIL_PORT, SENDER, SENDER_PW)
     msg = 'msg: hello world!!!'
     subject = 'subject: hello world!!'
-    receiver = SENDER
+    receiver = 'yangwanyuan@ztgame.com'
     emailclient.sendmsg(receiver, subject, msg)
 
