@@ -1,7 +1,0 @@
-[global]
-a = 1
-b = "bbb"
-c = [1,2,3,4]
-d = {"a":1, "b":2}
-e = /aaa/%s/whater/
-f = aaa,bbb,ccc
