@@ -109,7 +109,8 @@ def monitor():
 
 def _monitor(region, instance):
     for (alarm_obj, thd) in CONF.get('alarm_list'):
-        datas = get_datas_from_api(region, instance, alarm_obj)
+        instance_id = instance.get('instance_id')
+        datas = get_datas_from_api(region, instance_id, alarm_obj)
         #LOG.info("region:%s, instance:%s, alarm_obj:%s, datas:%s" %(region, instance, alarm_obj, datas))
         threshold = float(thd)
         for data in datas:
@@ -156,6 +157,9 @@ def get_datas_from_api(region, instance, alarm_obj):
 def alarm(instance, data, alarm_obj, threshold):
     bodys = data.get('data')
     name = data.get('name')
+    instance_id =instance.get('instance_id')
+    project = instance.get('project_id')
+    user_id = instance.get('user_id')
     if bodys == []:
         #print "%s's network %s:  NO data" %(instance, name)
         #LOG.info("%s's %s is %s:  NO data" %(instance, alarm_obj, name))
@@ -167,13 +171,13 @@ def alarm(instance, data, alarm_obj, threshold):
         multiple = 1
         max_data = body.get('max')
         if max_data*multiple >  threshold:
-            message =  "Instance %s's %s device is %s:   data is to high %s %s"%(instance, alarm_obj, name, max_data, unit)
+            message =  " Instance:%s\n Project:%s\n User:%s\n AlarmBody:%s\n Device:%s\n Message:data is to high %s %s\n"%(instance_id , project, user_id, alarm_obj, name, max_data, unit)
             #print message
             LOG.info(message)
-            send_message(instance, alarm_obj, message)
+            send_message(alarm_obj, message)
             return True
 
-def send_message(instance,  subject, message):
+def send_message(subject, message):
 
     email_host = CONF.get('email_host')
     email_port = CONF.get('email_port')
