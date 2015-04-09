@@ -246,7 +246,12 @@ def virs_list(req,region):
     virs=InstanceManager().getallActiveInstances(NOVA_DB(region))
     data = []
     for vir in virs:
-        data.append(vir.uuid)
+        item= {}
+        item['instance_id']= vir.uuid
+        item['user_id'] = vir.user_id
+        item['project_id'] = vir.project_id
+        #data.append(vir.uuid)
+        data.append(item)
     body = json.dumps({"code":200,"message":"ok","data":data})
     return HttpResponse(body) 
 
