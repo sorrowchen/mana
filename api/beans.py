@@ -393,8 +393,12 @@ class InstanceManager:
 		return childs
 		
 
+
 GET_SERVICE_URL='SELECT url FROM endpoint WHERE interface="public" AND region=%s AND service_id =(SELECT id FROM service WHERE type=%s)'
-		
+#GET_USER_BY_USERID = 'SELECT name FROM user WHERE id=%s'
+GET_USER_BY_USERID = 'SELECT name FROM user WHERE id=%s'
+GET_PROJECT_BY_PROJECTID = 'SELECT name FROM project WHERE id=%s'
+	
 class KeyStoneManager:
     def getServiceUrl(self,service_name,region,tenant=settings.SYS_C2):
 	print "getServiceUrl:  region:%s,service_name:%s" % (region,service_name)
@@ -403,7 +407,28 @@ class KeyStoneManager:
 	cursor.execute(GET_SERVICE_URL,(region,service_name))
 	result=cursor.fetchone()
 	cursor.close()
+        db_region.close()
 	return None if not result else result[0] % tenant
+    
+    def getUserByUserID(self, user_id):
+        #keystone_db = KEYSTONE_DB
+        keystone_db = connections["KEYSTONE"]
+        cursor = keystone_db.cursor()
+        cursor.execute(GET_USER_BY_USERID,[user_id])
+        result = cursor.fetchone()
+        cursor.close()
+        keystone_db.close()
+        return None if not result else result[0]
+        
+    def getProjectByProjectID(self, project_id):
+        #keystone_db = KEYSTONE_DB
+        keystone_db = connections["KEYSTONE"]
+        cursor = keystone_db.cursor()
+        cursor.execute(GET_PROJECT_BY_PROJECTID,[project_id])
+        result = cursor.fetchone()
+        cursor.close()
+        keystone_db.close()
+        return None if not result else result[0]
 
 GET_FREE_IP='SELECT networks.`name`,networks.`status`,subnets.id,ipavailabilityranges.first_ip,ipavailabilityranges.last_ip,networks.id,subnets.`name` as "subnet_name" FROM ipavailabilityranges,ipallocationpools,subnets,networks WHERE ipavailabilityranges.allocation_pool_id=ipallocationpools.id AND ipallocationpools.subnet_id=subnets.id AND subnets.network_id=networks.id AND networks.`status`="ACTIVE" AND networks.admin_state_up=1 AND networks.shared=1 ORDER BY networks.`name`,subnets.`name`'
 
