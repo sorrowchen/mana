@@ -156,10 +156,11 @@ def get_datas_from_api(region, instance, alarm_obj):
 
 def alarm(instance, data, alarm_obj, threshold):
     bodys = data.get('data')
-    name = data.get('name')
+    device_name = data.get('name')
     instance_id =instance.get('instance_id')
-    project = instance.get('project_id')
-    user_id = instance.get('user_id')
+    project = instance.get('project')
+    user = instance.get('user')
+    instance_name = instance.get('instance_name')
     if bodys == []:
         #print "%s's network %s:  NO data" %(instance, name)
         #LOG.info("%s's %s is %s:  NO data" %(instance, alarm_obj, name))
@@ -171,7 +172,8 @@ def alarm(instance, data, alarm_obj, threshold):
         multiple = 1
         max_data = body.get('max')
         if max_data*multiple >  threshold:
-            message =  " Instance:%s\n Project:%s\n User:%s\n AlarmBody:%s\n Device:%s\n Message:data is to high %s %s\n"%(instance_id , project, user_id, alarm_obj, name, max_data, unit)
+            message =  " Instance_ID:%s\n Instance_Name:%s\n Project:%s\n User:%s\n AlarmBody:%s\n Device:%s\n Message:data is to high %s %s\n"\
+                        %(instance_id, instance_name, project, user, alarm_obj, device_name, max_data, unit)
             #print message
             LOG.info(message)
             send_message(alarm_obj, message)
