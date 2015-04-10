@@ -92,6 +92,8 @@ def run():
             time_pre = time.time()
             monitor()
             time_now = time.time()
+            monitor_time = time_now - time_pre
+            LOG.info("this cycle monitor all instances use time: %ss" %monitor_time)
             time.sleep(interval + time_pre - time_now)
         except Exception, e:
             LOG.error(e)
