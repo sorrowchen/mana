@@ -1,3 +1,6 @@
+#! /usr/bin/python
+#coding:utf-8
+
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
@@ -31,6 +34,8 @@ class Email():
             self.handle = smtplib.SMTP(self.email_host, self.email_port)
             self.handle.login(self.sender, self.sender_pw)
             msgbody = MIMEText('<html><h1>%s</h1></html>'%msg, 'html', 'utf-8')
+            msgbody["Accept-Language"]= "zh-CN"
+            msgbody["Accept-Charset"]= "ISO-8859-1,utf-8"
             msgbody['Subject'] = Header(subject, 'utf-8')
             self.handle.sendmail(self.sender, receiver, msgbody.as_string())
             LOG.info("send message %s to receiver %s success " %(subject, receiver))
@@ -53,8 +58,8 @@ if __name__ == "__main__":
     SENDER = 'autowork@ztgame.com'
     SENDER_PW = 'ak123$%^'
     emailclient = Email(EMAIL_HOST, EMAIL_PORT, SENDER, SENDER_PW)
-    msg = 'msg: hello world!!!'
-    subject = 'subject: hello world!!'
+    msg = u'msg:你好啊 !!!'
+    subject = u'subject: hello world!!'
     receiver = 'yangwanyuan@ztgame.com'
     emailclient.sendmsg(receiver, subject, msg)
 
