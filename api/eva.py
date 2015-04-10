@@ -248,12 +248,12 @@ def virs_list(req,region):
     for vir in virs:
         item= {}
         item['instance_id']= vir.uuid
-        item['user'] = KeyStoneManager().getUserByUserID(vir.user_id)
-        item['project'] = KeyStoneManager().getProjectByProjectID(vir.project_id)
+        item['user'] = KeyStoneManager().getUserByUserID(vir.user_id).encode('latin-1').decode('utf-8')
+        item['project'] = KeyStoneManager().getProjectByProjectID(vir.project_id).encode('latin-1').decode('utf-8')
         item['instance_name'] = vir.hostname
         #data.append(vir.uuid)
         data.append(item)
-    body = json.dumps({"code":200,"message":"ok","data":data})
+    body = json.dumps({"code":200,"message":"ok","data":data},ensure_ascii=False, indent=2)
     return HttpResponse(body) 
 
 
