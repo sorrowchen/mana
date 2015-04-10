@@ -23,15 +23,15 @@ SECRET_KEY = '9fp*i*gp!lxi1k5c5zo4&^2&hie5+_guoyzze0q#0**(gb^3#%'
 
 import socket
 
-#if socket.gethostname()=="devstack":
-#    DEBUG = True
-#    TEMPLATE_DEBUG = True
-#else:
-#    DEBUG = False
-#    TEMPLATE_DEBUG = False
+if socket.gethostname()=="ywy":
+    DEBUG = True
+    TEMPLATE_DEBUG = True
+else:
+    DEBUG = False
+    TEMPLATE_DEBUG = False
 
-DEBUG = True
-TEMPLATE_DEBUG = True
+#DEBUG = True
+#TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
