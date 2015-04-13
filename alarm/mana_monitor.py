@@ -102,26 +102,31 @@ def run():
 	
 
 def monitor():
-    regions = CONF.get('regions')
-    for region in regions:
-        instances = get_instances_from_api(region)
-        for instance in instances:
-            _monitor(region, instance)
-            #datas = get_network_flow(region, instance)
-            #for data in datas:
-            #    alarm(instance, data, threshold)
+    try:
+        regions = CONF.get('regions')
+        for region in regions:
+            instances = get_instances_from_api(region)
+            for instance in instances:
+                _monitor(region, instance)
+                #datas = get_network_flow(region, instance)
+                #for data in datas:
+                #    alarm(instance, data, threshold)
+    except Exception, e:
+        LOG.error(e)
 
 def _monitor(region, instance):
-    for (alarm_obj, thd) in CONF.get('alarm_list'):
-        instance_id = instance.get('instance_id')
-        datas = get_datas_from_api(region, instance_id, alarm_obj)
-        #LOG.info("region:%s, instance:%s, alarm_obj:%s, datas:%s" %(region, instance, alarm_obj, datas))
-        threshold = float(thd)
-        for data in datas:
-            alarm(instance, data, alarm_obj, threshold)
-            #LOG.info(data)
-            #alarm(instance, data, threshold)
-
+    try:
+        for (alarm_obj, thd) in CONF.get('alarm_list'):
+            instance_id = instance.get('instance_id')
+            datas = get_datas_from_api(region, instance_id, alarm_obj)
+            #LOG.info("region:%s, instance:%s, alarm_obj:%s, datas:%s" %(region, instance, alarm_obj, datas))
+            threshold = float(thd)
+            for data in datas:
+                alarm(instance, data, alarm_obj, threshold)
+                #LOG.info(data)
+                #alarm(instance, data, threshold)
+    except Exception, e:
+        LOG.error(e) 
 
 
 def get_instances_from_api(region):
@@ -159,42 +164,47 @@ def get_datas_from_api(region, instance, alarm_obj):
 
 
 def alarm(instance, data, alarm_obj, threshold):
-    bodys = data.get('data')
-    device_name = data.get('name')
-    instance_id =instance.get('instance_id')
-    project = instance.get('project').encode('latin-1')
-    user = instance.get('user').encode('latin-1')
-    instance_name = instance.get('instance_name')
-    if bodys == []:
-        #print "%s's network %s:  NO data" %(instance, name)
-        #LOG.info("%s's %s is %s:  NO data" %(instance, alarm_obj, name))
-        return False
-    #print data
-    for body in bodys:
-        unit = body.get('unit')
-        multiple = unit_map.get(alarm_obj).get(unit)
-        multiple = 1
-        max_data = body.get('max')
-        if max_data*multiple >  threshold:
-            message =  " Instance_ID:%s\n Instance_Name:%s\n Project:%s\n User:%s\n AlarmBody:%s\n Device:%s\n Message:data is to high %s %s\n"\
-                        %(instance_id, instance_name, project, user, alarm_obj, device_name, max_data, unit)
-            #print message
-            LOG.info(message)
-            send_message(alarm_obj, message)
-            return True
+    try:
+        bodys = data.get('data')
+        device_name = data.get('name')
+        instance_id =instance.get('instance_id')
+        project = instance.get('project').encode('latin-1')
+        user = instance.get('user').encode('latin-1')
+        instance_name = instance.get('instance_name')
+        if bodys == []:
+            #print "%s's network %s:  NO data" %(instance, name)
+            #LOG.info("%s's %s is %s:  NO data" %(instance, alarm_obj, name))
+            return False
+        #print data
+        for body in bodys:
+            unit = body.get('unit')
+            multiple = unit_map.get(alarm_obj).get(unit)
+            multiple = 1
+            max_data = body.get('max')
+            if max_data*multiple >  threshold:
+                message =  " Instance_ID:%s\n Instance_Name:%s\n Project:%s\n User:%s\n AlarmBody:%s\n Device:%s\n Message:data is to high %s %s\n"\
+                            %(instance_id, instance_name, project, user, alarm_obj, device_name, max_data, unit)
+                #print message
+                LOG.info(message)
+                send_message(alarm_obj, message)
+                return True
+    except Exception, e:
+        LOG.error(e)
 
 def send_message(subject, message):
-
-    email_host = CONF.get('email_host')
-    email_port = CONF.get('email_port')
-    sender = CONF.get('email_sender')
-    sender_pwd = CONF.get('email_sender_pwd')
-    receivers = CONF.get('email_receiver')
-    emailclient = Email(email_host, email_port, sender, sender_pwd)
-    for receiver  in receivers:
-        msg = message
-        subject = subject +  '   alarm!!!' 
-        emailclient.sendmsg(receiver, subject, msg)
+    try:
+        email_host = CONF.get('email_host')
+        email_port = CONF.get('email_port')
+        sender = CONF.get('email_sender')
+        sender_pwd = CONF.get('email_sender_pwd')
+        receivers = CONF.get('email_receiver')
+        emailclient = Email(email_host, email_port, sender, sender_pwd)
+        for receiver  in receivers:
+            msg = message
+            subject = subject +  '   alarm!!!' 
+            emailclient.sendmsg(receiver, subject, msg)
+    except Exception,e:
+        LOG.error(e)
 
     
 

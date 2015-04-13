@@ -1,15 +1,15 @@
 [global]
-cycletime = 200
-api_host = 127.0.0.1
-api_port = 8080
-regions = beijing
+cycletime = 1800
+api_host = 222.73.196.30
+api_port = 80
+regions = beijing,zhenru,Nanhui
 
 [url]
 get_all_instance_url = /api/virs_list/%s/
 get_metric = /api/statics/%s/%s/%s/3h/
 
 [alarm]
-cpu_util = 0.1
+cpu_util = 10
 #network_incoming_bytes_rate = 50000000
 #network_outgoing_bytes_rate = 50000000
 #disk_write_bytes_rate = 2000

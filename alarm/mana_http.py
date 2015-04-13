@@ -1,3 +1,6 @@
+#!/usr/bin/python
+#coding:utf-8
+
 import httplib
 
 class HttpCon():
@@ -27,3 +30,5 @@ class HttpCon():
 if __name__ == "__main__":
     a = HttpCon("www.baidu.com", 80, "/", "GET")
     print a.get()
+
+
