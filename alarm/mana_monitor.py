@@ -1,4 +1,6 @@
 #!/usr/bin/python
+#coding:utf-8
+
 
 import os
 import time
@@ -160,8 +162,8 @@ def alarm(instance, data, alarm_obj, threshold):
     bodys = data.get('data')
     device_name = data.get('name')
     instance_id =instance.get('instance_id')
-    project = instance.get('project')
-    user = instance.get('user')
+    project = instance.get('project').encode('latin-1')
+    user = instance.get('user').encode('latin-1')
     instance_name = instance.get('instance_name')
     if bodys == []:
         #print "%s's network %s:  NO data" %(instance, name)
