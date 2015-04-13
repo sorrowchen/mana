@@ -43,7 +43,7 @@ def GetConf():
         config = ConfigParser.ConfigParser()
         config.read('/etc/mana/mana_monitor.conf')
         conf = Parser(config) 
-    except Exception, e;
+    except Exception, e:
         print e
     return conf
 
