@@ -10,6 +10,8 @@ import ks_auth
 from public import NOVA_DB,NEUTRON_DB,NOVA,NEUTRON,RTN_200,RTN_500
 import framework
 
+from django.utils.encoding import smart_text
+
 DATABASES=settings.DATABASES
 REGIONS=settings.REGIONS
 
@@ -248,8 +250,12 @@ def virs_list(req,region):
     for vir in virs:
         item= {}
         item['instance_id']= vir.uuid
+        #item['user'] = KeyStoneManager().getUserByUserID(vir.user_id).encode('latin-1').decode('utf-8')
+        #item['project'] = KeyStoneManager().getProjectByProjectID(vir.project_id).encode('latin-1').decode('utf-8')
         item['user'] = KeyStoneManager().getUserByUserID(vir.user_id)
         item['project'] = KeyStoneManager().getProjectByProjectID(vir.project_id)
+        #smart_text(item['user'], encoding='latin-1', strings_onliy=False, error='strict')
+        #smart_text(item['project'], encoding='latin-1', strings_onliy=False, error='strict')l
         item['instance_name'] = vir.hostname
         #data.append(vir.uuid)
         data.append(item)

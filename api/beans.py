@@ -396,8 +396,8 @@ class InstanceManager:
 
 GET_SERVICE_URL='SELECT url FROM endpoint WHERE interface="public" AND region=%s AND service_id =(SELECT id FROM service WHERE type=%s)'
 #GET_USER_BY_USERID = 'SELECT name FROM user WHERE id=%s'
-GET_USER_BY_USERID = 'SELECT name FROM user WHERE id=%s'
-GET_PROJECT_BY_PROJECTID = 'SELECT name FROM project WHERE id=%s'
+GET_USER_BY_USERID = "SELECT name FROM user WHERE id='%s'"
+GET_PROJECT_BY_PROJECTID = "SELECT name FROM project WHERE id='%s'"
 	
 class KeyStoneManager:
     def getServiceUrl(self,service_name,region,tenant=settings.SYS_C2):
@@ -411,24 +411,61 @@ class KeyStoneManager:
 	return None if not result else result[0] % tenant
     
     def getUserByUserID(self, user_id):
-        #keystone_db = KEYSTONE_DB
-        keystone_db = connections["KEYSTONE"]
-        cursor = keystone_db.cursor()
-        cursor.execute(GET_USER_BY_USERID,[user_id])
-        result = cursor.fetchone()
-        cursor.close()
-        keystone_db.close()
-        return None if not result else result[0]
+        ##keystone_db = KEYSTONE_DB
+        #keystone_db = connections["KEYSTONE"]
+        #cursor = keystone_db.cursor()
+        #sql = GET_USER_BY_USERID %user_id
+        ##cursor.execute(GET_USER_BY_USERID,[user_id])
+        #cursor.execute(sql)
+        #result = cursor.fetchone()
+        #cursor.close()
+        #keystone_db.close()
+        #return None if not result else result[0]
+    
+        from mana.conf import DATABASES
+        import MySQLdb
+        v_host = DATABASES.get('KEYSTONE').get('HOST')
+        v_user = DATABASES.get('KEYSTONE').get('USER')
+        v_passwd = DATABASES.get('KEYSTONE').get('PASSWORD')
+        v_db = DATABASES.get('KEYSTONE').get('NAME')
+        v_charset = 'latin1'
+        con = MySQLdb.connect(host=v_host, user=v_user, passwd=v_passwd, db=v_db, charset=v_charset)
+        cur = con.cursor()
+        sql_query = GET_USER_BY_USERID %user_id
+        cur.execute(sql_query)
+        result = cur.fetchone()
+        cur.close()
+        con.close()
+        return None if not result else result[0].encode('latin-1').decode('utf-8')
         
     def getProjectByProjectID(self, project_id):
-        #keystone_db = KEYSTONE_DB
-        keystone_db = connections["KEYSTONE"]
-        cursor = keystone_db.cursor()
-        cursor.execute(GET_PROJECT_BY_PROJECTID,[project_id])
-        result = cursor.fetchone()
-        cursor.close()
-        keystone_db.close()
-        return None if not result else result[0]
+        ##keystone_db = KEYSTONE_DB
+        #keystone_db = connections["KEYSTONE"]
+        #cursor = keystone_db.cursor()
+        ##cursor.execute('set names ')
+        ##cursor.execute(GET_PROJECT_BY_PROJECTID,[project_id])
+        #sql = GET_PROJECT_BY_PROJECTID %project_id
+        #cursor.execute(sql)
+        #result = cursor.fetchone()
+        #cursor.close()
+        #keystone_db.close()
+        #return None if not result else result[0]
+    
+        from mana.conf import DATABASES
+        import MySQLdb
+        v_host = DATABASES.get('KEYSTONE').get('HOST')
+        v_user = DATABASES.get('KEYSTONE').get('USER')
+        v_passwd = DATABASES.get('KEYSTONE').get('PASSWORD')
+        v_db = DATABASES.get('KEYSTONE').get('NAME')
+        v_charset = 'latin1'
+        con = MySQLdb.connect(host=v_host, user=v_user, passwd=v_passwd, db=v_db, charset=v_charset)
+        cur = con.cursor()
+        sql_query = GET_PROJECT_BY_PROJECTID %project_id
+        cur.execute(sql_query)
+        result = cur.fetchone()
+        cur.close()
+        con.close()
+        return None if not result else result[0].encode('latin-1').decode('utf-8')
 
 GET_FREE_IP='SELECT networks.`name`,networks.`status`,subnets.id,ipavailabilityranges.first_ip,ipavailabilityranges.last_ip,networks.id,subnets.`name` as "subnet_name" FROM ipavailabilityranges,ipallocationpools,subnets,networks WHERE ipavailabilityranges.allocation_pool_id=ipallocationpools.id AND ipallocationpools.subnet_id=subnets.id AND subnets.network_id=networks.id AND networks.`status`="ACTIVE" AND networks.admin_state_up=1 AND networks.shared=1 ORDER BY networks.`name`,subnets.`name`'
 
