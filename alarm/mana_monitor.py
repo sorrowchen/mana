@@ -1,6 +1,10 @@
 #!/usr/bin/python
 #coding:utf-8
-
+import sys
+default_encoding = 'utf-8'
+if sys.getdefaultencoding() != default_encoding:
+    reload(sys)
+    sys.setdefaultencoding(default_encoding)
 
 import os
 import time
@@ -168,8 +172,14 @@ def alarm(instance, data, alarm_obj, threshold):
         bodys = data.get('data')
         device_name = data.get('name')
         instance_id =instance.get('instance_id')
-        project = instance.get('project').encode('utf-8')
-        user = instance.get('user').encode('utf-8')
+        try:
+            project = instance.get('project').encode('utf-8')
+        except Exception:
+            project = instance.get('project')
+        try:
+            user = instance.get('user').encode('utf-8')
+        except Exception:
+            user = instance.get('user')
         instance_name = instance.get('instance_name')
         if bodys == []:
             #print "%s's network %s:  NO data" %(instance, name)
