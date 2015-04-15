@@ -27,7 +27,13 @@ email_sender_pwd = wppxvrsclvgblnye
 email_receiver = ztgame_work@126.com
 
 
-
+[phone]
+phone_host = 222.73.30.20
+phone_port = 29997
+phone_gametype = 2
+phone_priority = 5
+phone_acttype = 89
+phone_receiver = 18505532175
 
 
 

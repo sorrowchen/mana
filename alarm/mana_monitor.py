@@ -1,5 +1,6 @@
 #!/usr/bin/python
 #coding:utf-8
+
 import sys
 default_encoding = 'utf-8'
 if sys.getdefaultencoding() != default_encoding:
@@ -9,46 +10,17 @@ if sys.getdefaultencoding() != default_encoding:
 import os
 import time
 
-#import httplib
 import simplejson
 
-from mana_http import HttpCon
-from mana_email import Email
-#import timer 
+from mana_http import HttpCon, UrlCon
+from mana_message import Email, SMS
 
 import mana_log
 LOG = mana_log.GetLog(__name__)
 
-#import logging 
-
-#LOG_FILE = 'monitor.log'
-#logging.basicConfig(filename = os.path.join(os.getcwd(), LOG_FILE), level = logging.DEBUG) 
-#LOG = logging.getLogger(__name__)
-
 import  mana_conf
 CONF = mana_conf.GetConf()
 
-
-#INTERVAL = 200   
-#THRESHOLD = 5
-
-#API_HOST = '127.0.0.1'
-#API_PORT = 8080
-#GET_ALL_INSTANCE_URL = '/api/virs_list/'
-
-#GET_METRIC = '/api/statics/'
-#ALARM_OBJ = 'network_incoming_bytes_rate/'
-#ALARM_TIME = '3h/'
-
-#REGIONS = ['shanghai', 'beijing']
-
-#unit_map = {"B/s":1,
-#            "KB/s":1024, 
-#            "MB/s":1024*1024,
-#            "GB/s":1024*1024*1024
-#       }
-
-#RECEIVER = 'yangwanyuan@ztgame.com'
 unit_map = {
             'cpu_util':{"%":1},
             'network_incoming_bytes_rate':  {
@@ -89,9 +61,23 @@ unit_map = {
                                             },                   
 }
 
+class msg_item:
+    def __init__(self, alarm_obj = None, instance_id = None, instance_name = None,\
+                 project = None, user = None, device_name = None, max_data = None, \
+                 unit = None, region = None):
+        self.alarm_obj = alarm_obj
+        self.instance_id = instance_id
+        self.instance_name = instance_name
+        self.project = project
+        self.user = user
+        self.device_name = device_name
+        self.max_data = max_data
+        self.unit = unit
+        self.region = region
+
+
 def run():
     interval = CONF.get('cycletime')
-    #threshold = THRESHOLD
     LOG.info("begin to monitor,every %s seconds" %interval)
     while True:
         try:
@@ -103,7 +89,6 @@ def run():
             time.sleep(interval + time_pre - time_now)
         except Exception, e:
             LOG.error(e)
-	
 
 def monitor():
     try:
@@ -112,9 +97,6 @@ def monitor():
             instances = get_instances_from_api(region)
             for instance in instances:
                 _monitor(region, instance)
-                #datas = get_network_flow(region, instance)
-                #for data in datas:
-                #    alarm(instance, data, threshold)
     except Exception, e:
         LOG.error(e)
 
@@ -123,39 +105,30 @@ def _monitor(region, instance):
         for (alarm_obj, thd) in CONF.get('alarm_list'):
             instance_id = instance.get('instance_id')
             datas = get_datas_from_api(region, instance_id, alarm_obj)
-            #LOG.info("region:%s, instance:%s, alarm_obj:%s, datas:%s" %(region, instance, alarm_obj, datas))
             threshold = float(thd)
             for data in datas:
-                alarm(instance, data, alarm_obj, threshold)
-                #LOG.info(data)
-                #alarm(instance, data, threshold)
+                alarm(instance, data, alarm_obj, threshold, region)
     except Exception, e:
         LOG.error(e) 
-
 
 def get_instances_from_api(region):
     url = CONF.get('url').get('get_all_instance_url') %region
     api_host = CONF.get('api_host')
     api_port = CONF.get('api_port')
-    #url = GET_ALL_INSTANCE_URL + region + '/' 
     try:
-        #con = httplib.HTTPConnection(API_HOST, API_PORT, timeout=30)
-        #con.request('GET', url)
-        #response = con.getresponse()
-        #instances = simplejson.loads(response.read()).get('data')
         httpclient = HttpCon(api_host, api_port, url, "GET")
         body = httpclient.get()
         if body:
             instances = simplejson.loads(body).get('data')
     except Exception, e:
         LOG.error(e)
+        return NULL
     return instances 
 
 def get_datas_from_api(region, instance, alarm_obj):
     url = CONF.get('url').get('get_metric') %(region, alarm_obj, instance)
     api_host = CONF.get('api_host')
     api_port = CONF.get('api_port')
-    #url = GET_METRIC + region + '/' + ALARM_OBJ + instance + '/' + ALARM_TIME
     try:
         httpclient = HttpCon(api_host, api_port, url, "POST")
         body = httpclient.get()
@@ -163,15 +136,19 @@ def get_datas_from_api(region, instance, alarm_obj):
             data = simplejson.loads(body)
     except Exception, e:
         LOG.error(e)
-    #print("get instance %s's network is %s "%(instance,data) )
+        return NULL
     return data
 
 
-def alarm(instance, data, alarm_obj, threshold):
+def alarm(instance, data, alarm_obj, threshold, region):
     try:
         bodys = data.get('data')
+        if bodys == []:
+            return False
+
         device_name = data.get('name')
         instance_id =instance.get('instance_id')
+        instance_name = instance.get('instance_name')
         try:
             project = instance.get('project').encode('utf-8')
         except Exception:
@@ -179,44 +156,62 @@ def alarm(instance, data, alarm_obj, threshold):
         try:
             user = instance.get('user').encode('utf-8')
         except Exception:
-            user = instance.get('user')
-        instance_name = instance.get('instance_name')
-        if bodys == []:
-            #print "%s's network %s:  NO data" %(instance, name)
-            #LOG.info("%s's %s is %s:  NO data" %(instance, alarm_obj, name))
-            return False
-        #print data
+            user = instance.get('user')  
+
         for body in bodys:
             unit = body.get('unit')
-            multiple = unit_map.get(alarm_obj).get(unit)
+            #multiple = unit_map.get(alarm_obj).get(unit)
             multiple = 1
             max_data = body.get('max')
             if max_data*multiple >  threshold:
-                message =  " Instance_ID:%s\n Instance_Name:%s\n Project:%s\n User:%s\n AlarmBody:%s\n Device:%s\n Message:data is to high %s %s\n"\
-                            %(instance_id, instance_name, project, user, alarm_obj, device_name, max_data, unit)
-                #print message
-                LOG.info(message)
-                send_message(alarm_obj, message)
+                msg_body = msg_item(alarm_obj, instance_id, instance_name, project, user, device_name, max_data, unit, region)
+                _alarm(msg_body)
                 return True
     except Exception, e:
         LOG.error(e)
 
-def send_message(subject, message):
+def _alarm(msg_body):
     try:
-        email_host = CONF.get('email_host')
-        email_port = CONF.get('email_port')
-        sender = CONF.get('email_sender')
-        sender_pwd = CONF.get('email_sender_pwd')
-        receivers = CONF.get('email_receiver')
+        message = 'Region:%s\n Instance_ID:%s\n Instance_Name:%s\n Project:%s\n User:%s\n AlarmBody:%s\n Device:%s\n Message:data is to high %s %s\n'\
+                    %(msg_body.region, msg_body.instance_id, msg_body.instance_name, msg_body.project, msg_body.user, msg_body.alarm_obj,\
+                      msg_body.device_name, msg_body.max_data, msg_body.unit)
+        LOG.info(message)
+        send_email(msg_body)
+        send_phone_message(msg_body)
+    except Exception,e:
+        LOG.error(e)
+
+def send_email(msg_body):
+    email_host = CONF.get('email_host')
+    email_port = CONF.get('email_port')
+    sender = CONF.get('email_sender')
+    sender_pwd = CONF.get('email_sender_pwd')
+    receivers = CONF.get('email_receiver')
+    try:
+        msg = ' Region:%s\n Instance_ID:%s\n Instance_Name:%s\n Project:%s\n User:%s\n AlarmBody:%s\n Device:%s\n Message:data is to high %s %s\n'\
+                    %(msg_body.region, msg_body.instance_id, msg_body.instance_name, msg_body.project, msg_body.user, msg_body.alarm_obj,\
+                      msg_body.device_name, msg_body.max_data, msg_body.unit)
+        subject = msg_body.alarm_obj +  '  alarm!!!' 
         emailclient = Email(email_host, email_port, sender, sender_pwd)
         for receiver  in receivers:
-            msg = message
-            subject = subject +  '   alarm!!!' 
             emailclient.sendmsg(receiver, subject, msg)
     except Exception,e:
         LOG.error(e)
 
-    
+def send_phone_message(msg_body):
+    phone_host = CONF.get('phone_host')
+    phone_port = CONF.get('phone_port')
+    gametype=CONF.get('phone_gametype')
+    priority=CONF.get('phone_priority')
+    acttype=CONF.get('phone_acttype')
+    receivers=CONF.get('phone_receiver')
+    try:
+        msg = "%B6%CC%D0%C5%B2%E2%CA%D4%A1%BE%BE%DE%C8%CB%CD%F8%C2%E7%A1%BF"
+        for receiver in receivers:
+            smsclient = SMS(phone_host, phone_port, gametype, priority, acttype)
+            smsclient.sendmsg(receiver, msg)
+    except Exception,e:
+        LOG.error(e)
 
 
 
