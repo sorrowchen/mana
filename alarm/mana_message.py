@@ -25,7 +25,7 @@ class Email():
         try:
             self.handle = smtplib.SMTP(self.email_host, self.email_port)
             self.handle.login(self.sender, self.sender_pw)
-            msgbody = MIMEText('<html><h1>%s</h1></html>'%msg, 'html', 'utf-8')
+            msgbody = MIMEText("<a>%s</a>"%msg, 'html', 'utf-8')
             msgbody["Accept-Language"]= "zh-CN"
             msgbody["Accept-Charset"]= "ISO-8859-1,utf-8"
             msgbody['Subject'] = Header(subject, 'utf-8')
@@ -78,12 +78,12 @@ if __name__ == "__main__":
     emailclient = Email(EMAIL_HOST, EMAIL_PORT, SENDER, SENDER_PW)
     emailclient.sendmsg(email_receiver, subject, msg)
 
-    PHONE_HOST = '192.168.39.120'
-    PHONE_PORT = 29997
-    GAMETYPE = '2'
-    PRIORITY = '5'
-    ACTTYPE = '89'
-    sms_receiver = '18505532175'
-    msg = "报警模块:network,区域:beijing,名称:aaa,项目:大主宰,用户:admin"
-    smsclient = SMS(PHONE_HOST, PHONE_PORT, GAMETYPE, PRIORITY, ACTTYPE)
-    smsclient.sendmsg(sms_receiver, msg)
+    #PHONE_HOST = '192.168.39.120'
+    #PHONE_PORT = 29997
+    #GAMETYPE = '2'
+    #PRIORITY = '5'
+    #ACTTYPE = '89'
+    #sms_receiver = '18505532175'
+    #msg = "报警模块:network,区域:beijing,名称:aaa,项目:大主宰,用户:admin"
+    #smsclient = SMS(PHONE_HOST, PHONE_PORT, GAMETYPE, PRIORITY, ACTTYPE)
+    #smsclient.sendmsg(sms_receiver, msg)
