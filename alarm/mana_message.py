@@ -53,7 +53,8 @@ class SMS():
         msg_postfix = '【巨人网络】'
         msg_postfix = msg_postfix.decode('utf-8').encode('gbk')
         msg = urllib.quote(message + msg_postfix)
-        url = "/emaysendMsg?dest_mobile=%s&msg_content=%s&priority=%s&gametype=%s&acttype=%s" %(receiver, msg, self.priority, self.gametype, self.acttype)
+        url = "/emaysendMsg?dest_mobile=%s&msg_content=%s&priority=%s&gametype=%s&acttype=%s" \
+              %(receiver, msg, self.priority, self.gametype, self.acttype)
         urlclient = UrlCon(self.phone_host, self.phone_port, url, "GET")
         body = urlclient.get()
         if body == '0|':
