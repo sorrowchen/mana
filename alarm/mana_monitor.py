@@ -165,8 +165,8 @@ def alarm(instance, data, alarm_obj, threshold, region):
             max_data = body.get('max') * multiple
             if max_data >  threshold:
                 if unit == 'B/s':
-                    max_data = max_data / (1024 * 1024)
-                    unit = 'MB/s'
+                    max_data = round((max_data / (1024 * 1024)), 2) 
+                    unit = 'MB|s'
                 msg_body = msg_item(alarm_obj, instance_id, instance_name, project, user, device_name, max_data, unit, region)
                 _alarm(msg_body)
                 return True
@@ -209,7 +209,7 @@ def send_phone_message(msg_body):
     acttype=CONF.get('phone_acttype')
     receivers=CONF.get('phone_receiver')
     try:
-        msg = "报警模块:%s,区域:%s,名称:%s,项目:%s,数据:%s%s" %(msg_body.alarm_obj, msg_body.region, msg_body.device_name, msg_body.project, msg_body.max_data, msg_body.unit)
+        msg = "报警模块:%s,区域:%s,项目:%s,名称:%s,数据:%s%s" %(msg_body.alarm_obj, msg_body.region, msg_body.device_name, msg_body.project, msg_body.max_data, msg_body.unit)
         for receiver in receivers:
             smsclient = SMS(phone_host, phone_port, gametype, priority, acttype)
             smsclient.sendmsg(receiver, msg)
