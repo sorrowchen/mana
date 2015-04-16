@@ -166,7 +166,7 @@ def alarm(instance, data, alarm_obj, threshold, region):
             if max_data >  threshold:
                 if unit == 'B/s':
                     max_data = round((max_data / (1024 * 1024)), 2) 
-                    unit = 'MB|s'
+                    unit = 'Mbits'
                 msg_body = msg_item(alarm_obj, instance_id, instance_name, project, user, device_name, max_data, unit, region)
                 _alarm(msg_body)
                 return True
