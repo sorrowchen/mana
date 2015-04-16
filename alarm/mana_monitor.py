@@ -206,7 +206,7 @@ def send_phone_message(msg_body):
     acttype=CONF.get('phone_acttype')
     receivers=CONF.get('phone_receiver')
     try:
-        msg = "%B6%CC%D0%C5%B2%E2%CA%D4%A1%BE%BE%DE%C8%CB%CD%F8%C2%E7%A1%BF"
+        msg = "报警模块:%s,区域:%s,名称:%s,项目:%s,用户:%s" %(msg_body.alarm_obj, msg_body.region, msg_body.device_name, msg_body.project, msg_body.user)
         for receiver in receivers:
             smsclient = SMS(phone_host, phone_port, gametype, priority, acttype)
             smsclient.sendmsg(receiver, msg)

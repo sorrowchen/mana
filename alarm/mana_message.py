@@ -7,12 +7,14 @@ from email.header import Header
 
 
 from mana_http import UrlCon
+import urllib
+
 import mana_log
 LOG = mana_log.GetLog(__name__)
 
 
 class Email():
-    def __init__(self, email_host, email_port, email_sender, email_sender_pwd):
+    def __init__(self, email_host = None, email_port = None, email_sender = None, email_sender_pwd = None):
         self.email_host = email_host
         self.email_port = email_port
         self.sender = email_sender
@@ -38,16 +40,20 @@ class Email():
 
 
 class SMS():
-    def __init__(self, phone_host, phone_port, gametype, priority, acttype):
+    def __init__(self, phone_host = None, phone_port = None, gametype = None, priority = None, acttype = None):
         self.phone_host = phone_host
         self.phone_port = phone_port
         self.gametype = gametype
         self.priority = priority
         self.acttype = acttype
-        pass
 
     def sendmsg(self, receiver, message):
-        url = "/emaysendMsg?dest_mobile=%s&msg_content=%s&priority=%s&gametype=%s&acttype=%s" %(receiver, message, self.priority, self.gametype, self.acttype)
+        message = message.decode('utf-8').encode('gbk')
+        #msg_postfix = "%A1%BE%BE%DE%C8%CB%CD%F8%C2%E7%A1%BF"
+        msg_postfix = '【巨人网络】'
+        msg_postfix = msg_postfix.decode('utf-8').encode('gbk')
+        msg = urllib.quote(message + msg_postfix)
+        url = "/emaysendMsg?dest_mobile=%s&msg_content=%s&priority=%s&gametype=%s&acttype=%s" %(receiver, msg, self.priority, self.gametype, self.acttype)
         urlclient = UrlCon(self.phone_host, self.phone_port, url, "GET")
         body = urlclient.get()
         if body == '0|':
@@ -64,15 +70,20 @@ class SMS():
 if __name__ == "__main__":
     EMAIL_HOST = 'mail.ztgame.com'
     EMAIL_PORT = 25
-
-    #SENDER = 'yangwanyuan@ztgame.com'
-    #SENDER_PW = 'ywy8861@000'
-
     SENDER = 'autowork@ztgame.com'
     SENDER_PW = 'ak123$%^'
-    emailclient = Email(EMAIL_HOST, EMAIL_PORT, SENDER, SENDER_PW)
-    msg = u'msg:你好啊 !!!'
+    email_receiver = 'yangwanyuan@ztgame.com'
     subject = u'subject: hello world!!'
-    receiver = 'yangwanyuan@ztgame.com'
-    emailclient.sendmsg(receiver, subject, msg)
+    msg = u'msg:你好啊 !!!'
+    emailclient = Email(EMAIL_HOST, EMAIL_PORT, SENDER, SENDER_PW)
+    emailclient.sendmsg(email_receiver, subject, msg)
 
+    PHONE_HOST = '192.168.39.120'
+    PHONE_PORT = 29997
+    GAMETYPE = '2'
+    PRIORITY = '5'
+    ACTTYPE = '89'
+    sms_receiver = '18505532175'
+    msg = "报警模块:network,区域:beijing,名称:aaa,项目:大主宰,用户:admin"
+    smsclient = SMS(PHONE_HOST, PHONE_PORT, GAMETYPE, PRIORITY, ACTTYPE)
+    smsclient.sendmsg(sms_receiver, msg)
