@@ -20,7 +20,7 @@ class HttpCon():
             response = self.con.getresponse()
             status = response.status 
             if status != 200:
-                return NULL
+                return None
             return response.read()
         except Exception, e:
             print e

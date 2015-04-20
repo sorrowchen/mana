@@ -1,1 +1,1 @@
-start-stop-daemon --stop  --name mana_monitor.py
+start-stop-daemon --stop  --name mana_run.py
