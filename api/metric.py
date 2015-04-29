@@ -113,4 +113,60 @@ def statics(req,Meteric,UUID,duration,region):
     return HttpResponse(json.dumps(RTN))
 
 
+####same wit statics, need fix later
+def alarm_statics(req,Meteric,UUID,time,region):
+    vir=InstanceManager().getInstanceByID(NOVA_DB(region),UUID)
+    if not vir:
+        return None
+    RTN=[]
+    if "network" in Meteric:
+        ports=NetworkFlowManager().getNetInfoByUUID(UUID,NEUTRON_DB(region))
+        print ports
+        for port in ports:
+            obj={}
+            obj["name"]=port["ip_address"]
+            ifaceId=ifaceID(UUID,port["id"],int(vir.id))
+            print "ifaceid:",ifaceId
+            obj["data"]=alarm_statistics(region,Meteric.replace("_","."),time,ifaceId)
+            RTN.append(obj)
+    elif "disk" in Meteric:
+        obj={}
+        obj["name"]=vir.hostname
+        obj["data"]=alarm_statistics(region,Meteric.replace("_","."),time,UUID)
+        RTN.append(obj)
+    elif "cpu_util"==Meteric:
+        obj={}
+        obj["name"]=vir.hostname
+        obj["data"]=alarm_statistics(region,Meteric,time,UUID)
+        RTN.append(obj)
+    return HttpResponse(json.dumps(RTN))
+
+
+def alarm_statistics(region,Meteric,duration,RES_ID):
+    metricUrl=KeyStoneManager().getServiceUrl("metering",region)
+    token=ks_auth.getToken()
+    print "token:",token
+    headers1 = { "X-Auth-Token":token, "Content-type":"application/json" }
+    now=int(time.time())
+    duration_sec=int(duration)
+    period_start=utils.msecs2utc(now-8*3600-duration_sec)
+    data1={
+           "Meteric":Meteric,
+           "RES_ID":RES_ID,
+           "period":1,
+           "period_start":urllib.quote(period_start,''),
+           }
+    print "metricUrl:",metricUrl
+    print "->:",connUrl(metricUrl)
+    conn1 = httplib.HTTPConnection(connUrl(metricUrl))
+    m_url="/v2/meters/%(Meteric)s/statistics?q.field=resource_id&q.field=timestamp&q.op=eq&q.op=gt&q.type=&q.type=&q.value=%(RES_ID)s&q.value=%(period_start)s&period=%(period)s" % data1
+    print "m_url:",m_url
+    conn1.request("GET",m_url,None,headers1)
+    response1 = conn1.getresponse()
+    rtn = response1.read()
+    conn1.close()
+    if rtn:
+        rtn = json.loads(rtn)
+    print "rtn:",rtn
+    return rtn
 

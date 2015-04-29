@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'metric/(?P<region>[\w-]+)/(?P<uuid>[\w-]+)/$','api.metric.index'), #get use:metric.html
     url(r'm1/$','api.metric.m1'), # nothing  use:m1.html
     url(r'statics/(?P<region>[\w-]+)/(?P<Meteric>[\w-]+)/(?P<UUID>[\w-]+)/(?P<duration>[\w-]+)/$','api.metric.statics'),#   get ceilometer data
+    url(r'statics/(?P<region>[\w-]+)/(?P<Meteric>[\w-]+)/(?P<UUID>[\w-]+)/seconds/(?P<time>[\w-]+)/$','api.metric.alarm_statics'),#   get ceilometer data for alarm
     url(r'evacuate/(?P<host>[\w-]+)/$','api.views.evacuate'),  #nothing
     url(r'face/$','api.views.face'),# nothing
     url(r'eva/$','api.views.eva'), # nothing
