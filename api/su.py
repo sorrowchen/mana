@@ -37,14 +37,14 @@ def limitSu(req,region,uuid,network_flow,network_id):
 def relimit(req,region,uuid,action):
     if action not in ["RESTART","EVACUATE","INIT"]:
         return  HttpResponse(RTN_500 % "Unknow limit su action request.")
-    #rtn=runScript(region,uuid,action)
-    #return HttpResponse(rtn)
-    import threading
-    limitthread = threading.Thread(target = limit_entry, name = "limit_thread", args = (region, uuid, action))
-    limitthread.setDaemon(True)
-    limitthread.start()
-    rtn = """{"code":200,"message":"ok","data":"null"}"""
+    rtn=runScript(region,uuid,action)
     return HttpResponse(rtn)
+    #import threading
+    #limitthread = threading.Thread(target = limit_entry, name = "limit_thread", args = (region, uuid, action))
+    #limitthread.setDaemon(True)
+    #limitthread.start()
+    #rtn = """{"code":200,"message":"ok","data":"null"}"""
+    #return HttpResponse(rtn)
 
 def chgPwd(req,uuid,region,pwd):
     user=framework.getApiUserByToken(req)
@@ -70,25 +70,26 @@ def chgPwd(req,uuid,region,pwd):
         LOG="SSH exception:%s" % str(ex)
     return HttpResponse((RTN_200 % LOG) if "True\n" in LOG else (RTN_500 % LOG))
 
-def limit_entry(region, uuid, action):
-    index = 0
-    while(True):
-        stat = InstanceManager().getInstanceStat(NOVA_DB(region),uuid)
-        if stat == "running":
-            runScript(region,uuid,action)
-            break
-        elif stat == None:
-            print "Can't find instance %s"%uuid
-            break
-        else:
-            time.sleep(5)
-            index = index + 1
-            if index > 1000:
-                print "Can't limit the vm %s's network, because it's not running"%uuid 
+#def limit_entry(region, uuid, action):
+#    index = 0
+#    while(True):
+#        stat = InstanceManager().getInstanceStat(NOVA_DB(region),uuid)
+#        print "The instance %s power_state is %s"%(uuid, stat)
+#        if stat == "running":
+#            runScript(region,uuid,action)
+#            break
+#        elif stat == None:
+#            print "Can't find instance %s"%uuid
+#            break
+#        else:
+#            time.sleep(5)
+#            index = index + 1
+#            if index > 1000:
+#                print "Can't limit the vm %s's network, because it's not running"%uuid 
     
 def runScript(region,uuid,action):
     #find host ip
-    time.sleep(5)
+    #time.sleep(5)
     hostInfo=InstanceManager().getHostIp(NOVA_DB(region),uuid)
     if not hostInfo:
         print "Can't find host ip by uuid(%s) in Region(%s)" % (uuid,region)
