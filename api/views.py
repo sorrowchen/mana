@@ -26,7 +26,7 @@ def chgPwd(req,userid,pwd):
     user=framework.getApiUserByToken(req)
     #user="test"
     if not user:
-	return HttpResponse(RTN_500 % "Unknow auth token request." )
+        return HttpResponse(RTN_500 % "Unknow auth token request." )
     print "chgPwd(ip:%s)---%s update password=%s where userid=%s" % (ip_addr,user,pwd,userid)
     password=passlib.hash.sha512_crypt.encrypt(pwd,rounds=40000)
     C2Keystone().chgPwd(userid,password)
@@ -45,10 +45,10 @@ def face(req):
 def eva(req):
     if req.method=='POST':
         ip=req.POST.get("ip")
-	return HttpResponse("post ip %s" % ip)
+        return HttpResponse("post ip %s" % ip)
     else:
-	ip=req.GET.get("ok","default value")
-	addr="addr"
+        ip=req.GET.get("ok","default value")
+        addr="addr"
         return HttpResponse("get ip %s,%s" % (ip,addr))
 
 def virs(req,region):

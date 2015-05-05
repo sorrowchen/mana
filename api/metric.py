@@ -43,8 +43,8 @@ DUR={
 }
 
 def connUrl(url):
-	rtn=url.replace("http://","")
-	return rtn[:(rtn.index("/"))] if "/" in rtn else rtn
+    rtn=url.replace("http://","")
+    return rtn[:(rtn.index("/"))] if "/" in rtn else rtn
 
 
 def ifaceID(uuid,portid,instid):
@@ -78,7 +78,7 @@ def statistics(region,Meteric,duration,RES_ID):
     rtn = response1.read()
     conn1.close()
     if rtn:
-	rtn = json.loads(rtn)
+        rtn = json.loads(rtn)
     print "rtn:",rtn
     return rtn
 
