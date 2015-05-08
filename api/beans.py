@@ -736,4 +736,80 @@ class C2cidrManager:
             cursor.close()
         return True
 
+ALARM_ITEM_GET = """SELECT * FROM alarm WHERE disable='0' AND region=%s AND cycletime=%s"""
+ALARM_CONTACTS_GET = """SELECT terminal FROM contacts WHERE list_id=%s AND type=%s"""
+"""
+alarm_item= [{
+              'instance':'***',
+              'alarm_obj':'***',
+              'threshold':'***',
+              'region':'***',
+              'contacts':{
+                          'email':['*','*'],
+                          'sms':['*','*']
+                         }
+             },
+            ]
+"""
+class AlarmManager:
+    def getAlarmFromCycletime(self, region, time):
+        result = self._getAlarmItemsFromCycletime(region, time)
+        alarm_items = []
+        for line in result:
+            instance_id = line[9]
+            alarm_obj = line[3]
+            threshold = line[4]
+            region = line[11]
+            contact_list = line[8]
+            instance = self._getInstancedetail(instance_id, region)
+            sms_list = self._getAlarmContacts(contact_list, 'SMS')
+            email_list = self._getAlarmContacts(contact_list, 'EMAIL')
+            contacts = {'sms':sms_list, 'email':email_list}
+            alarm_item = {'instance':instance, 
+                          'alarm_obj':alarm_obj, 
+                          'threshold':threshold, 
+                          'region':region, 
+                          'contacts':contacts
+                          }
+            alarm_items.append(alarm_item)
+        return alarm_items
+    
+    def _getAlarmItemsFromCycletime(self, region, cycletime):
+        cursor=connection.cursor()
+        try:
+            cursor.execute(ALARM_ITEM_GET, (region, cycletime))
+            result = cursor.fetchall()
+        except Exception,ex:
+            print Exception,":",ex
+            return []
+        finally:
+            cursor.close()
+        return result
+        
+    def _getAlarmContacts(self, list_id, type):
+        cursor=connection.cursor()
+        contacts_list = []
+        try:
+            cursor.execute(ALARM_CONTACTS_GET, (list_id, type))
+            result = cursor.fetchall()
+            for line in result:
+                contacts_list.append(line[0])
+        except Exception,ex:
+            print Exception,":",ex
+            return []
+        finally:
+            cursor.close()
+        return contacts_list
+    
+    def _getInstancedetail(self, instance_id, region):
+        item= {}
+        try:
+            vir = InstanceManager().getInstanceByID(NOVA_DB(region),instance_id)
+            item['instance_id']= instance_id
+            item['user'] = KeyStoneManager().getUserByUserID(vir.user_id)
+            item['project'] = KeyStoneManager().getProjectByProjectID(vir.project_id)
+            item['instance_name'] = vir.hostname 
+        except Exception,ex:
+            print Exception,":",ex
+        return item
 

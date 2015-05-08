@@ -112,7 +112,7 @@ def statics(req,Meteric,UUID,duration,region):
         RTN.append(obj)
     return HttpResponse(json.dumps(RTN))
 
-
+"""
 ####same wit statics, need fix later
 def alarm_statics(req,Meteric,UUID,time,region):
     vir=InstanceManager().getInstanceByID(NOVA_DB(region),UUID)
@@ -169,4 +169,5 @@ def alarm_statistics(region,Meteric,duration,RES_ID):
         rtn = json.loads(rtn)
     print "rtn:",rtn
     return rtn
+"""
 

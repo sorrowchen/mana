@@ -86,7 +86,7 @@ def chgPwd(req,uuid,region,pwd):
 #            index = index + 1
 #            if index > 1000:
 #                print "Can't limit the vm %s's network, because it's not running"%uuid 
-    
+
 def runScript(region,uuid,action):
     #find host ip
     #time.sleep(5)

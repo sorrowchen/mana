@@ -238,6 +238,7 @@ def getAvaNetworkId(nodes,tag):
             return v["network_id"]
     return 0
 
+"""
 def virs_list(req,region):
     REGION=region
     virs=InstanceManager().getallActiveInstances(NOVA_DB(region))
@@ -256,5 +257,5 @@ def virs_list(req,region):
         data.append(item)
     body = json.dumps({"code":200,"message":"ok","data":data},ensure_ascii=False, indent=2)
     return HttpResponse(body) 
-
+"""
 
